@@ -23,5 +23,13 @@ public class Ghostmhjjhgc : MonoBehaviour
         float movingX = Input.GetAxis("Horizontal");
         float movingY = Input.GetAxis("Vertical");
         rb.velocity = new Vector2(movingX * speed, movingY * speed);
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            speed = 6;
+        }
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            speed = 3;
+        }
     }
 }
