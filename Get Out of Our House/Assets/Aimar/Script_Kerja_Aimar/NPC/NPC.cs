@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class NPC : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private NPC_Move_Action moveAction;
+    private void Awake()
     {
-        
+        moveAction = GetComponent<NPC_Move_Action>();
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+    public NPC_Move_Action GetMoveAction()
+    {
+        return moveAction;
     }
 }

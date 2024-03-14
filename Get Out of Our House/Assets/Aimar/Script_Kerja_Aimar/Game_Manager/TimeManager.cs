@@ -9,6 +9,7 @@ public class TimeManager : MonoBehaviour
     #region Time Characteristics
     private int hour;
     private int minute;
+    private int timerEvent;
     private TwelveHourClockState timeState;
     private float currentTime;
     private float oneSecondInterval;
@@ -35,7 +36,7 @@ public class TimeManager : MonoBehaviour
 
     #region Time Event
     //Making sure that UI Event and Action Event are different to make ORGANIZED
-    public event Action OneSecondIntervalEventAction;
+    public event Action<int> OneSecondIntervalEventAction;
     public event Action<TimeData> OneSecondIntervalEventUI;
     #endregion
     private void Awake()
@@ -50,6 +51,7 @@ public class TimeManager : MonoBehaviour
         timeState = TwelveHourClockState.PM;
         currentTime = 0;
         oneSecondInterval = 0.33f;
+        timerEvent = 0;
     }
     private void Start()
     {
@@ -83,7 +85,8 @@ public class TimeManager : MonoBehaviour
                 timeState = TwelveHourClockState.AM;
             }
         }
-        OneSecondIntervalEventAction?.Invoke();
+        timerEvent++;
+        OneSecondIntervalEventAction?.Invoke(timerEvent);
         OneSecondIntervalEventUI?.Invoke(new TimeData(hour,minute,timeState));
     }
 }

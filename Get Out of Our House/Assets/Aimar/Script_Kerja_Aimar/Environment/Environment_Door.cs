@@ -9,10 +9,11 @@ public class Environment_Door : MonoBehaviour
     
     public void InterractDoor(NPC npc)
     {
-        Vector3 targetPosition = transform.position;
-        targetPosition.y = 0;
+        Vector3 targetPosition = nextDoor.transform.position;
+        targetPosition.y = npc.transform.position.y;
         npc.transform.position = targetPosition;
-        //Camera.main.transform.position = GetCameraNextDoorPosition();
+        npc.GetMoveAction().StopAction();
+        Camera.main.transform.position = GetCameraNextDoorPosition();
     }
     private Transform GetCameraTransform()
     {
