@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class NPC_Move_Action : MonoBehaviour
@@ -15,10 +16,9 @@ public class NPC_Move_Action : MonoBehaviour
     [SerializeField] private Transform TestingTargetLocation;
     #endregion
     [SerializeField] private Vector3 targetLocation;
+    [SerializeField] private Vector2 collisionSize;
     [SerializeField] private float movementSpeed;
     
-    private bool canMove;
-    private bool canInterractWithObject;
     private NPC npc;
     private void Awake()
     {
@@ -27,46 +27,45 @@ public class NPC_Move_Action : MonoBehaviour
     private void Start()
     {
         SetTargetLocation(TestingTargetLocation.position);
-        StartAction();
     }
-    private void Update()
+    public async void MoveAction()
     {
-        if (!canMove) return;
-        if (Vector3.Distance(targetLocation, transform.position) < 0.1f)
+        Debug.Log(Vector3.Distance(targetLocation, transform.position));
+        while(Vector3.Distance(targetLocation, transform.position) > 0.15f)
         {
-            canMove = false;
+            MovingTowards();
+            await Task.Yield();
         }
-        MovingTowards();
+        DetectionBox();
+    }
+    private void DetectionBox()
+    {
+        Collider2D[] collisionObject = Physics2D.OverlapBoxAll(transform.position, collisionSize, 0);
+        foreach (Collider2D currentObject in collisionObject)
+        {
+            if (currentObject.gameObject.TryGetComponent<Environment_Door>(out Environment_Door environmentDoor))
+            {
+                environmentDoor.InterractDoor(npc);
+            }
+        }
     }
     public void SetTargetLocation(Vector3 targetLocation)
     {
-        canMove = true;
         targetLocation.y = transform.position.y;
         this.targetLocation = targetLocation;
+        MoveAction();
     }
     
     public void MovingTowards()
     {
+        //Debug.Log("Moving Towards");
         Vector3 currentPosition = transform.position;
-        currentPosition.y = transform.position.y;
         transform.position = Vector3.MoveTowards(currentPosition, targetLocation, movementSpeed * Time.deltaTime);
     }
-    public void SetCanMove(bool canMove)
-    {
-        this.canMove = canMove; 
-    }
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (!canInterractWithObject) return;
-        if (collision.TryGetComponent<Environment_Door>(out Environment_Door door))
-        {
-            door.InterractDoor(npc);
-        }
-    }
+     
     public void StartAction()
     {
-        canMove = true;
-        canInterractWithObject = true;
+        
     }
     public void ContinueAction()
     {
@@ -74,7 +73,6 @@ public class NPC_Move_Action : MonoBehaviour
     }
     public void StopAction()
     {
-        canMove = false;
-        canInterractWithObject = false;
+        
     }
 }

@@ -14,6 +14,7 @@ public class EventManager : MonoBehaviour
 
     private void Instance_OneSecondIntervalEventAction(int timerEvent)
     {
+        if (currentEventAction == null) return;
         if(currentEventAction.timerEvent == timerEvent)
         {
             currentEventAction.InvokeAction();

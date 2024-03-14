@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class NPC : MonoBehaviour
 {
-    [SerializeField] private NPC_Move_Action moveAction;
+    private NPC_Move_Action moveAction;
     private void Awake()
     {
         moveAction = GetComponent<NPC_Move_Action>();
