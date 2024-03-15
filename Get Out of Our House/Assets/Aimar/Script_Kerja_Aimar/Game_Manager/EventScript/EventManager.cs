@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,12 +8,16 @@ public class EventManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        eventActions = new Queue<EventAction>(DataEvents.instance._ListOfMoveAction);
+        currentEventAction = eventActions.Dequeue();
         TimeManager.instance.OneSecondIntervalEventAction += Instance_OneSecondIntervalEventAction;
     }
 
     private void Instance_OneSecondIntervalEventAction(int timerEvent)
     {
-        if (currentEventAction == null) return;
+        
+        if(currentEventAction == null) return;
+
         if(currentEventAction.timerEvent == timerEvent)
         {
             currentEventAction.InvokeAction();

@@ -12,7 +12,6 @@ public class Environment_Door : MonoBehaviour
         Vector3 targetPosition = nextDoor.transform.position;
         targetPosition.y = npc.transform.position.y;
         npc.transform.position = targetPosition;
-        npc.GetMoveAction().StopAction();
         Camera.main.transform.position = GetCameraNextDoorPosition();
     }
     private Transform GetCameraTransform()

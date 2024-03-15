@@ -26,9 +26,9 @@ public class NPC_Move_Action : MonoBehaviour
     }
     private void Start()
     {
-        SetTargetLocation(TestingTargetLocation.position);
+        //SetTargetLocation(TestingTargetLocation.position);
     }
-    public async void MoveAction()
+    private async Task MoveAction()
     {
         Debug.Log(Vector3.Distance(targetLocation, transform.position));
         while(Vector3.Distance(targetLocation, transform.position) > 0.15f)
@@ -49,11 +49,12 @@ public class NPC_Move_Action : MonoBehaviour
             }
         }
     }
-    public void SetTargetLocation(Vector3 targetLocation)
+    public async Task SetTargetLocation(Vector3 targetLocation)
     {
         targetLocation.y = transform.position.y;
         this.targetLocation = targetLocation;
-        MoveAction();
+        await MoveAction();
+        await Task.Yield();
     }
     
     public void MovingTowards()
