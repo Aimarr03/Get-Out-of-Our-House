@@ -6,6 +6,9 @@ public class Ghost : MonoBehaviour
 {
     public float speed;
     private Rigidbody2D rb;
+    public static bool isPosessingObject;
+    public static bool isPosessingPerson;
+    public static bool isPosessing;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,13 +19,19 @@ public class Ghost : MonoBehaviour
     void Update()
     {
         moving();
+        if (isPosessingObject || isPosessingPerson)
+        {
+            isPosessing = true;
+        }
+        else
+        {
+            isPosessing = false;
+        }
+        if(isPosessingPerson)
+        {
+            transform.position = GetComponent<PosessPerson>().targetPosess.transform.position;
+        }
     }
-
-    public void test()
-    {
-        Debug.Log("TESTED");
-    }
-
 
     void moving()
     {
