@@ -50,7 +50,7 @@ public class TimeManager : MonoBehaviour
         minute = 0;
         timeState = TwelveHourClockState.PM;
         currentTime = 0;
-        oneSecondInterval = 0.33f;
+        oneSecondInterval = 0.66f;
         timerEvent = 0;
     }
     private void Start()
