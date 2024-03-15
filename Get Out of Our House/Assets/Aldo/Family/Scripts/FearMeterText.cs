@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class FearMeter : MonoBehaviour
+public class FearMeterText : MonoBehaviour
 {
-    public float fearMeter;
     [SerializeField] private TextMeshProUGUI fearMeterText;
     // Start is called before the first frame update
     void Start()
