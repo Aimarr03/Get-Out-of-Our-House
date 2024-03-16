@@ -51,6 +51,10 @@ public class DialogueManager : MonoBehaviour
         VD.OnNodeChange -= ChangeDialogueNodeAction;
         VD.OnEnd -= EndDialogue;
     }
+    private void OnInterractDialogue()
+    {
+
+    }
     private IEnumerator ShowDialogueContent()
     {
         string text = string.Empty;

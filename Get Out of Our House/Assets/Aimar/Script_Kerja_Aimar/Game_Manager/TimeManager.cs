@@ -13,6 +13,7 @@ public class TimeManager : MonoBehaviour
     private TwelveHourClockState timeState;
     private float currentTime;
     private float oneSecondInterval;
+    private float TestingRealTime;
     //This struct helps to make data transmission easier and organized, more into organized
     public struct TimeData
     {
@@ -52,6 +53,7 @@ public class TimeManager : MonoBehaviour
         currentTime = 0;
         oneSecondInterval = 0.66f;
         timerEvent = 0;
+        TestingRealTime = 0;
     }
     private void Start()
     {
@@ -61,6 +63,7 @@ public class TimeManager : MonoBehaviour
     private void Update()
     {
         currentTime += Time.deltaTime;
+        TestingRealTime += Time.deltaTime;
         //This approach is to make sure that the time one second is recorded
         //In order to not discard the remaining Time.DeltaTime like for example 1.1234 which 1234
         //IT will be saved using the method which OneSecondInterval()

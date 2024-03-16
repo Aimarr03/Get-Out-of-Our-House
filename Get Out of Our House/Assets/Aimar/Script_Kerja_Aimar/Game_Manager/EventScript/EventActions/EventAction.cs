@@ -7,6 +7,7 @@ public abstract class EventAction
 {
     public int timerEvent;
     public NPC npc;
-    public abstract bool CheckActionCondition();
+    public abstract bool CheckActionCondition(Action action);
     public abstract void InvokeAction();
+    public abstract int GetTimerEvent();
 }
