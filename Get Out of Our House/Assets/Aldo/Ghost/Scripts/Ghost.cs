@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Ghost : MonoBehaviour
 {
@@ -45,6 +46,14 @@ public class Ghost : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.LeftShift))
         {
             speed = 3;
+        }
+        if (movingX < 0)
+        {
+            transform.localScale = new Vector2(1, 1);
+        }
+        if (movingX > 0)
+        {
+            transform.localScale = new Vector2(-1, 1);
         }
     }
 }
