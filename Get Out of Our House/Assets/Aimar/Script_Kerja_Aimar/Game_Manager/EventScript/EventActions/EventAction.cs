@@ -4,7 +4,7 @@ using UnityEngine.Events;
 [Serializable]
 public abstract class EventAction
 {
-    public bool AllConditionMet;
+    public bool AllConditionMet = true;
     public UnityEvent CheckConditionsRequired;
     public int timerEvent;
     public NPC npc;

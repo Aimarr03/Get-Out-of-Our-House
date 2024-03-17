@@ -55,6 +55,7 @@ public class EventManager : MonoBehaviour
     }
     public void SetCurrentActionConditions(bool input)
     {
+        if (!currentEventAction.AllConditionMet) return;
         currentEventAction.AllConditionMet = input;
     }
 }
