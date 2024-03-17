@@ -9,11 +9,6 @@ public class MoveAction : EventAction
 {
     [SerializeField] private List<Transform> DestinationLocation;
 
-    public override bool CheckActionCondition(Action action)
-    {
-        return false;
-    }
-
     public override int GetTimerEvent()
     {
         return timerEvent;

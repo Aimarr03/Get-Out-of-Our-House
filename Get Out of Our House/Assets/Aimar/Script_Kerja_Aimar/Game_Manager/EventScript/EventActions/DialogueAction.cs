@@ -1,3 +1,4 @@
+using UnityEngine;
 using System;
 using System.Diagnostics;
 
@@ -5,11 +6,6 @@ using System.Diagnostics;
 public class DialogueAction : EventAction
 {
     public string dialogueName;
-    public override bool CheckActionCondition(Action action)
-    {
-        return false;
-    }
-
     public override int GetTimerEvent()
     {
         return timerEvent;

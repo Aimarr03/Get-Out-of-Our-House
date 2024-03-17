@@ -4,9 +4,16 @@ using UnityEngine;
 
 public class EventManager : MonoBehaviour
 {
+    public static EventManager Instance;
     [SerializeField] private Queue<EventAction> eventActions;
     private EventAction currentEventAction;
-    // Start is called before the first frame update
+
+    private void Awake()
+    {
+        if (Instance != null) return;
+        Instance = this;
+    }
+
     void Start()
     {
         Queue<EventAction> moveActions = new Queue<EventAction>(DataEvents.instance._ListOfMoveAction);
@@ -22,6 +29,8 @@ public class EventManager : MonoBehaviour
         if(currentEventAction == null) return;
         if(currentEventAction.timerEvent == timerEvent)
         {
+            currentEventAction.CheckConditionsRequired.Invoke();
+            if (!currentEventAction.AllConditionMet) return;
             currentEventAction.InvokeAction();
             Debug.Log(currentEventAction);
             currentEventAction = eventActions.Dequeue();
@@ -44,9 +53,8 @@ public class EventManager : MonoBehaviour
         }
         return combinedQueue;
     }
-    // Update is called once per frame
-    void Update()
+    public void SetCurrentActionConditions(bool input)
     {
-        
+        currentEventAction.AllConditionMet = input;
     }
 }

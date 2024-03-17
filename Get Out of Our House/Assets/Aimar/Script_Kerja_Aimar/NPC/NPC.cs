@@ -19,4 +19,8 @@ public class NPC : MonoBehaviour
     {
         return moveAction;
     }
+    public void TestingMakeFalse()
+    {
+        EventManager.Instance.SetCurrentActionConditions(false);
+    }
 }
