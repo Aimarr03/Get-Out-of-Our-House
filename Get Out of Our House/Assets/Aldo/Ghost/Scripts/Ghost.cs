@@ -17,6 +17,20 @@ public class Ghost : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         currentRoom.PlayParticleSystem(true);
+        PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
+    }
+
+    private void Instance_InvokeInterract()
+    {
+        Debug.Log("Invoke Interract");
+        Collider2D[] collider = Physics2D.OverlapBoxAll(transform.position, boxSize, 0);
+        foreach (Collider2D collider2d in collider)
+        {
+            if (collider2d.TryGetComponent<Environment_Door>(out Environment_Door door))
+            {
+                door.InterractDoor(this);
+            }
+        }
     }
 
     // Update is called once per frame
@@ -35,25 +49,16 @@ public class Ghost : MonoBehaviour
         {
             transform.position = GetComponent<PosessPerson>().targetPosess.transform.position;
         }
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            Collider2D[] collider = Physics2D.OverlapBoxAll(transform.position, boxSize, 0);
-            foreach (Collider2D collider2d in collider)
-            {
-                if (collider2d.TryGetComponent<Environment_Door>(out Environment_Door door))
-                {
-                    door.InterractDoor(this);
-                }
-            }
-        }
         
     }
 
     void moving()
     {
-        float movingX = Input.GetAxis("Horizontal");
-        float movingY = Input.GetAxis("Vertical");
-        rb.velocity = new Vector2(movingX * speed, movingY * speed);
+        Vector2 inputMovement = PlayerControllerManager.instance.GetVector2Input();
+        
+        //float movingX = Input.GetAxis("Horizontal");
+        //float movingY = Input.GetAxis("Vertical");
+        rb.velocity = new Vector2(inputMovement.x * speed , inputMovement.y * speed );
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             speed = 12;
@@ -62,11 +67,11 @@ public class Ghost : MonoBehaviour
         {
             speed = 6;
         }
-        if (movingX < 0)
+        if (inputMovement.x < 0)
         {
             transform.localScale = new Vector2(1, 1);
         }
-        if (movingX > 0)
+        if (inputMovement.x > 0)
         {
             transform.localScale = new Vector2(-1, 1);
         }

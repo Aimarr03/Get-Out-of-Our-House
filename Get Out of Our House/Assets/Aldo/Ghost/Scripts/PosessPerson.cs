@@ -10,7 +10,19 @@ public class PosessPerson : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
+    }
+
+    private void Instance_InvokeInterract()
+    {
+        if (targetPosess != null && targetPosess.GetComponent<FearMeter>().fearMeter >= 5)
+        {
+            Debug.Log("Poesess Person");
+            targetPosess.GetComponent<SpriteRenderer>().color = Color.blue;
+            GetComponent<SpriteRenderer>().enabled = false;
+            targetPosess.GetComponent<Posessed>().isPosessed = true;
+            Ghost.isPosessingPerson = true;
+        }
     }
 
     // Update is called once per frame
