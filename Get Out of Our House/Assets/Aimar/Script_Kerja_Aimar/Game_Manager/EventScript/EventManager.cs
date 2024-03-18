@@ -30,10 +30,11 @@ public class EventManager : MonoBehaviour
         if(currentEventAction == null) return;
         if(currentEventAction.timerEvent == timerEvent)
         {
-            currentEventAction.CheckConditionsRequired.Invoke();
+            currentEventAction.CheckConditionsRequired?.Invoke();
             if (!currentEventAction.AllConditionMet) return;
             currentEventAction.InvokeAction();
             Debug.Log(currentEventAction);
+            if (currentEventAction == null) return;
             currentEventAction = eventActions.Dequeue();
             Instance_OneSecondIntervalEventAction(timerEvent);
         }

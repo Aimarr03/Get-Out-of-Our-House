@@ -26,9 +26,10 @@ public class NPC : MonoBehaviour
     }
     private void ExecuteDialogue()
     {
+        Debug.Log(dialogueAction == null);
         if(dialogueAction != null)
         {
-            dialogueAction.PreExecuteDialogueCondition.Invoke();
+            dialogueAction.PreExecuteDialogueCondition?.Invoke();
             if (dialogueAction.AllConditionMet) DialogueManager.instance.AssignDialogue(dialogueAction.dialogueName);
             dialogueAction = null;
         }

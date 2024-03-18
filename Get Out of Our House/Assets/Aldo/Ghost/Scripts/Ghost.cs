@@ -7,6 +7,7 @@ public class Ghost : MonoBehaviour
 {
     public float speed;
     private Rigidbody2D rb;
+    private bool canMove;
     public static bool isPosessingObject;
     public static bool isPosessingPerson;
     public static bool isPosessing;
@@ -15,9 +16,24 @@ public class Ghost : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        canMove = true;
         rb = GetComponent<Rigidbody2D>();
         currentRoom.PlayParticleSystem(true);
         PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
+        DialogueManager.instance.beginDialogue += Instance_beginDialogue;
+        DialogueManager.instance.endDialogue += Instance_endDialogue;
+    }
+
+    private void Instance_endDialogue()
+    {
+        PlayerControllerManager.instance.InvokeInterract -= Instance_InvokeInterract;
+        canMove = true;
+    }
+
+    private void Instance_beginDialogue()
+    {
+        PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
+        canMove= false;
     }
 
     private void Instance_InvokeInterract()
@@ -36,6 +52,7 @@ public class Ghost : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!canMove) return;
         moving();
         if (isPosessingObject || isPosessingPerson)
         {

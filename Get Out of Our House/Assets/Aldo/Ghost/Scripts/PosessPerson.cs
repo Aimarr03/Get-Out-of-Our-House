@@ -11,6 +11,18 @@ public class PosessPerson : MonoBehaviour
     void Start()
     {
         PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
+        DialogueManager.instance.beginDialogue += Instance_beginDialogue;
+        DialogueManager.instance.endDialogue += Instance_endDialogue;
+    }
+
+    private void Instance_endDialogue()
+    {
+        PlayerControllerManager.instance.InvokeInterract -= Instance_InvokeInterract;
+    }
+
+    private void Instance_beginDialogue()
+    {
+        PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
     }
 
     private void Instance_InvokeInterract()

@@ -10,6 +10,18 @@ public class PossesingObject : MonoBehaviour
     void Start()
     {
         PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
+        DialogueManager.instance.endDialogue += Instance_endDialogue;
+        DialogueManager.instance.beginDialogue += Instance_beginDialogue;
+    }
+
+    private void Instance_beginDialogue()
+    {
+        PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
+    }
+
+    private void Instance_endDialogue()
+    {
+        PlayerControllerManager.instance.InvokeInterract -= Instance_InvokeInterract;
     }
 
     private void Instance_InvokeInterract()

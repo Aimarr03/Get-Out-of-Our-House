@@ -249,9 +249,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   doors:
   - {fileID: 8386913881954021550}
-  background: {fileID: 5593467144549727653}
-  floor: {fileID: 3666604270476605096}
+  background: {fileID: 3666604270476605096}
+  floor: {fileID: 5593467144549727653}
   boundMultiplier: 0.75
+  dustParticleSystem: {fileID: 0}
   type: 0
 --- !u!1 &7294484244078930260
 GameObject:
