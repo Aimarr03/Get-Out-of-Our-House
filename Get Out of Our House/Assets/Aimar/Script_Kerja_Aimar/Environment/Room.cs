@@ -28,8 +28,8 @@ public class Room : MonoBehaviour
         Bounds bounds = floor.bounds;
         minHorizontal = bounds.min.x;
         maxHorizontal = bounds.max.x;
-        maxHorizontal *= boundMultiplier;
-        minHorizontal *= boundMultiplier;
+        minHorizontal += 1.5f;
+        maxHorizontal -= 1.5f;
         Debug.Log($"min: {minHorizontal} max: {maxHorizontal}");
     }
     public Environment_Door GetRandomDoors()

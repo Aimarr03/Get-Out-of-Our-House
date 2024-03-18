@@ -17,14 +17,11 @@ public class GhostBuster_Move_Action : MonoBehaviour
     }
     private void Start()
     {
-        currentBounds = 0;
+        SetTargetNextRoom();
     }
     private void Update()
     {
-        if(currentBounds == 0)
-        {
-
-        }
+        
     }
     private async Task MoveAction()
     {
@@ -36,27 +33,65 @@ public class GhostBuster_Move_Action : MonoBehaviour
         }
         DetectionBox();
     }
+    private void SetTargetNextRoom()
+    {
+        Room room = ghostBuster.GetCurrentRoom();
+        Debug.Log($"Going to {room.gameObject} room");
+        Environment_Door nextRoom = room.GetRandomDoors();
+        Vector3 nextRoomPosition = nextRoom.transform.position;
+        SetTargetLocation(nextRoomPosition);
+    }
+    public async void StartIdlingTheRoom()
+    {
+        Room room = ghostBuster.GetCurrentRoom();
+        room.GetBackgroundHorizontalBound(out float minBound, out float maxBound);
+        SetTargetLocation(minBound, maxBound);
+        await Task.Yield();
+    }
     private void DetectionBox()
     {
+        if (currentBounds != 0) return;
         Collider2D[] collisionObject = Physics2D.OverlapBoxAll(transform.position, collisionSize, 0);
         foreach (Collider2D currentObject in collisionObject)
         {
+            Debug.Log(currentObject.gameObject.name);
             if (currentObject.gameObject.TryGetComponent<Environment_Door>(out Environment_Door environmentDoor))
             {
                 environmentDoor.InterractDoor(ghostBuster);
             }
         }
     }
-    public async Task SetTargetLocation(Vector3 targetLocation)
+    private async Task SetTargetLocation(Vector3 targetLocation)
     {
+        //Debug.Log("Going to the Door");
         targetLocation.y = transform.position.y;
         this.targetLocation = targetLocation;
         await MoveAction();
-        await Task.Yield();
-        currentBounds = Random.Range(1, maxBounds + 1);
     }
-
-    public void MovingTowards()
+    private async void SetTargetLocation(float min, float max)
+    {
+        float result = Random.Range(min, max);
+        Vector3 newPosition = new Vector3(result, transform.position.y, 0);
+        targetLocation = newPosition;
+        await MoveAction();
+        await Task.Delay(Random.Range(800, 1500));
+        currentBounds--;
+        Debug.Log($"Current Bounds {currentBounds}");
+        if (currentBounds > 0)
+        {
+            StartIdlingTheRoom();
+        }
+        else
+        {
+            SetTargetNextRoom();
+        }
+    }
+    public void GetRandomizedMaxBounds()
+    {
+        currentBounds = Random.Range(1, maxBounds + 1);
+        Debug.Log($"Current Bounds {currentBounds}");
+    }
+    private void MovingTowards()
     {
         //Debug.Log("Moving Towards");
         Vector3 currentPosition = transform.position;

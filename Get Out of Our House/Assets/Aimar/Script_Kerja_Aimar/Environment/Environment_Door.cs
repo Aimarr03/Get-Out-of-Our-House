@@ -13,7 +13,7 @@ public class Environment_Door : MonoBehaviour
         Vector3 targetPosition = nextDoor.transform.position;
         targetPosition.y = npc.transform.position.y;
         npc.transform.position = targetPosition;
-        Camera.main.transform.position = GetCameraNextDoorPosition();
+        //Camera.main.transform.position = GetCameraNextDoorPosition();
     }
     public void InterractDoor(Ghost ghost)
     {
@@ -24,22 +24,24 @@ public class Environment_Door : MonoBehaviour
     }
     public void InterractDoor(GhostBuster ghostBuster)
     {
+        Debug.Log("Ghost Buster interracting with door");
         Vector3 targetPosition = nextDoor.transform.position;
         targetPosition.y = ghostBuster.transform.position.y;
         ghostBuster.transform.position = targetPosition;
+
         ghostBuster.SetCurrentRoom(nextDoor.GetRoom());
+        ghostBuster.GetMoveAction().GetRandomizedMaxBounds();
+        Camera.main.transform.position = GetCameraNextDoorPosition();
+        
+        ghostBuster.GetMoveAction().StartIdlingTheRoom();
     }
     private Transform GetCameraTransform()
     {
         return cameraPosition;
     }
-    public Vector3 GetCameraNextDoorPosition()
+    private Vector3 GetCameraNextDoorPosition()
     {
         return nextDoor.GetCameraTransform().position;
-    }
-    private Room GetRoomNextDoor()
-    {
-        return nextDoor.GetRoom();
     }
     public Room GetRoom()
     {

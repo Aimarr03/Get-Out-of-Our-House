@@ -5,7 +5,7 @@ using UnityEngine;
 public class GhostBuster : MonoBehaviour
 {
     private GhostBuster_Move_Action moveAction;
-    private Room currentRoom;
+    [SerializeField] private Room currentRoom;
 
     private void Awake()
     {
@@ -19,5 +19,9 @@ public class GhostBuster : MonoBehaviour
     public void GetBoundsRoom(out float min, out  float max)
     {
         currentRoom.GetBackgroundHorizontalBound(out min, out max);
+    }
+    public Room GetCurrentRoom()
+    {
+        return currentRoom;
     }
 }
