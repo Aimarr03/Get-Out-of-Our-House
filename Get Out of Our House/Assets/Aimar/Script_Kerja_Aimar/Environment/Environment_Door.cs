@@ -20,7 +20,10 @@ public class Environment_Door : MonoBehaviour
         Vector3 targetPosition = nextDoor.transform.position;
         targetPosition.y = nextDoor.transform.position.y;
         ghost.transform.position = targetPosition;
-        //Camera.main.transform.position = GetCameraNextDoorPosition();
+        ghost.GetCurrentRoom().PlayParticleSystem(false);
+        ghost.SetCurrentRoom(nextDoor.GetRoom());
+        ghost.GetCurrentRoom().PlayParticleSystem(true);
+        Camera.main.transform.position = GetCameraNextDoorPosition();
     }
     public void InterractDoor(GhostBuster ghostBuster)
     {

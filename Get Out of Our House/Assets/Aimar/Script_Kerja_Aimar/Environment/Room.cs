@@ -19,6 +19,7 @@ public class Room : MonoBehaviour
     [SerializeField] private SpriteRenderer background;
     [SerializeField] private SpriteRenderer floor;
     [SerializeField] private float boundMultiplier;
+    [SerializeField] private ParticleSystem dustParticleSystem;
     public RoomType type;
     private void Start()
     {
@@ -43,5 +44,10 @@ public class Room : MonoBehaviour
     {
         int maxBound = doors.Length;
         return doors[Random.Range(0, maxBound)];
+    }
+    public void PlayParticleSystem(bool input)
+    {
+        if (input) dustParticleSystem.Play();
+        else dustParticleSystem.Stop();
     }
 }
