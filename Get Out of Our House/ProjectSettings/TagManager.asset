@@ -27,6 +27,7 @@ TagManager:
   - 
   - 
   - 
+  - postBloom
   - 
   - 
   - 
@@ -37,8 +38,7 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
+  - camera
   m_SortingLayers:
   - name: Default
     uniqueID: 0
