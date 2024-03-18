@@ -23,4 +23,5 @@ public class NPC : MonoBehaviour
     {
         EventManager.Instance.SetCurrentActionConditions(false);
     }
+    
 }

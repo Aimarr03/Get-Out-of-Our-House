@@ -6,6 +6,7 @@ public class Environment_Door : MonoBehaviour
 {
     [SerializeField] private Environment_Door nextDoor;
     [SerializeField] private Transform cameraPosition;
+    [SerializeField] private Room room;
     
     public void InterractDoor(NPC npc)
     {
@@ -21,6 +22,13 @@ public class Environment_Door : MonoBehaviour
         ghost.transform.position = targetPosition;
         Camera.main.transform.position = GetCameraNextDoorPosition();
     }
+    public void InterractDoor(GhostBuster ghostBuster)
+    {
+        Vector3 targetPosition = nextDoor.transform.position;
+        targetPosition.y = ghostBuster.transform.position.y;
+        ghostBuster.transform.position = targetPosition;
+        ghostBuster.SetCurrentRoom(nextDoor.GetRoom());
+    }
     private Transform GetCameraTransform()
     {
         return cameraPosition;
@@ -28,5 +36,13 @@ public class Environment_Door : MonoBehaviour
     public Vector3 GetCameraNextDoorPosition()
     {
         return nextDoor.GetCameraTransform().position;
+    }
+    private Room GetRoomNextDoor()
+    {
+        return nextDoor.GetRoom();
+    }
+    public Room GetRoom()
+    {
+        return room;
     }
 }
