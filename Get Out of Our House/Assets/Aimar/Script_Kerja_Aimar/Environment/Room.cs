@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class Room : MonoBehaviour
@@ -15,6 +14,7 @@ public class Room : MonoBehaviour
         Attic,
         SecondFloorHall
     }
+    public event Action playerEnterRoom;
     [SerializeField] private Environment_Door[] doors;
     [SerializeField] private SpriteRenderer background;
     [SerializeField] private SpriteRenderer floor;
@@ -43,11 +43,15 @@ public class Room : MonoBehaviour
     public Environment_Door GetRandomDoors()
     {
         int maxBound = doors.Length;
-        return doors[Random.Range(0, maxBound)];
+        return doors[UnityEngine.Random.Range(0, maxBound)];
     }
     public void PlayParticleSystem(bool input)
     {
         if (input) dustParticleSystem.Play();
         else dustParticleSystem.Stop();
+    }
+    public void ExecutePlayerEnterRoomEvent()
+    {
+        playerEnterRoom?.Invoke();
     }
 }

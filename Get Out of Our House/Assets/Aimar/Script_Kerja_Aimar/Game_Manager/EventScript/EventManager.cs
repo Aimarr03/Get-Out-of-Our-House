@@ -35,6 +35,7 @@ public class EventManager : MonoBehaviour
             currentEventAction.InvokeAction();
             Debug.Log(currentEventAction);
             currentEventAction = eventActions.Dequeue();
+            Instance_OneSecondIntervalEventAction(timerEvent);
         }
     }
     private Queue<EventAction> CombinesQueue<EventAction>(Queue<EventAction> queue01, Queue<EventAction> queue02)

@@ -11,7 +11,11 @@ public class Environment_Door : MonoBehaviour
     public void InterractDoor(NPC npc)
     {
         Vector3 targetPosition = nextDoor.transform.position;
-        targetPosition.y = nextDoor.GetRoom().GetFloorVerticalBound();
+        targetPosition.y = nextDoor.room.GetFloorVerticalBound();
+
+        npc.DesubscribeToRoom(room);
+        npc.SubscribeToRoom(nextDoor.room);
+
         npc.transform.position = targetPosition;
         //Camera.main.transform.position = GetCameraNextDoorPosition();
     }
@@ -20,19 +24,23 @@ public class Environment_Door : MonoBehaviour
         Vector3 targetPosition = nextDoor.transform.position;
         targetPosition.y = nextDoor.transform.position.y;
         ghost.transform.position = targetPosition;
+
         ghost.GetCurrentRoom().PlayParticleSystem(false);
-        ghost.SetCurrentRoom(nextDoor.GetRoom());
+        ghost.SetCurrentRoom(nextDoor.room);
         ghost.GetCurrentRoom().PlayParticleSystem(true);
+
+        nextDoor.room.ExecutePlayerEnterRoomEvent();
+
         Camera.main.transform.position = GetCameraNextDoorPosition();
     }
     public void InterractDoor(GhostBuster ghostBuster)
     {
         Debug.Log("Ghost Buster interracting with door");
         Vector3 targetPosition = nextDoor.transform.position;
-        targetPosition.y = nextDoor.GetRoom().GetFloorVerticalBound();
+        targetPosition.y = nextDoor.room.GetFloorVerticalBound();
         ghostBuster.transform.position = targetPosition;
 
-        ghostBuster.SetCurrentRoom(nextDoor.GetRoom());
+        ghostBuster.SetCurrentRoom(nextDoor.room);
         ghostBuster.GetMoveAction().GetRandomizedMaxBounds();
         Camera.main.transform.position = transform.position;
         
