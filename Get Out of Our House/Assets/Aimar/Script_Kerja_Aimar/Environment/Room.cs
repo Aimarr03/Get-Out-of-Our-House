@@ -12,7 +12,8 @@ public class Room : MonoBehaviour
         ChildBedroom,
         ParentsBedroom,
         Basement,
-        Attic
+        Attic,
+        SecondFloorHall
     }
     [SerializeField] private Environment_Door[] doors;
     [SerializeField] private SpriteRenderer background;
@@ -31,6 +32,12 @@ public class Room : MonoBehaviour
         minHorizontal += 1.5f;
         maxHorizontal -= 1.5f;
         Debug.Log($"min: {minHorizontal} max: {maxHorizontal}");
+    }
+    public float GetFloorVerticalBound()
+    {
+        Bounds bounds = floor.bounds;
+        float maxVertical = bounds.max.y;
+        return maxVertical;
     }
     public Environment_Door GetRandomDoors()
     {

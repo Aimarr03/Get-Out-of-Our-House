@@ -61,7 +61,7 @@ public class GhostBuster_Move_Action : MonoBehaviour
             }
         }
     }
-    private async Task SetTargetLocation(Vector3 targetLocation)
+    private async void SetTargetLocation(Vector3 targetLocation)
     {
         //Debug.Log("Going to the Door");
         targetLocation.y = transform.position.y;
