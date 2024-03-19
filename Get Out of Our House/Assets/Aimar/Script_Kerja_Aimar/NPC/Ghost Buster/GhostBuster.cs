@@ -5,10 +5,6 @@ using UnityEngine;
 
 public class GhostBuster : MonoBehaviour
 {
-    private int sanity;
-    private bool isVunerable;
-    private int sanityArmor;
-    private int maxSanityArmor;
     private GhostBuster_Move_Action moveAction;
     [SerializeField] private Room currentRoom;
     private Ghost ghost;
@@ -18,10 +14,6 @@ public class GhostBuster : MonoBehaviour
     private void Awake()
     {
         moveAction = GetComponent<GhostBuster_Move_Action>();
-        isVunerable = false;
-        maxSanityArmor = 2;
-        sanityArmor = maxSanityArmor;
-        sanity = 2;
     }
     private void Update()
     {
@@ -52,29 +44,7 @@ public class GhostBuster : MonoBehaviour
         this.ghost = ghost;
         GhostDetected?.Invoke(this.ghost != null, currentGhostRoom);
     }
-    public bool Surprised()
-    {
-        sanityArmor--;
-        if(sanityArmor <= 0)
-        {
-            isVunerable = true;
-        }
-        return sanityArmor <= 0;
-    }
-    public bool Fear()
-    {
-        if(isVunerable)
-        {
-            sanity--;
-            sanityArmor = maxSanityArmor;
-            isVunerable= false;
-            if(sanity <= 0)
-            {
-                Debug.Log("Win");
-            }
-        }
-        return sanity <= 0;
-    }
+
     public void RemoveGhostDetection(Ghost ghost)
     {
         Room currentGhostRoom = ghost.GetCurrentRoom();
