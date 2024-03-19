@@ -19,7 +19,8 @@ public class GhostBuster_Combat : MonoBehaviour
     {
         Non,
         Aggro,
-        Attack
+        Attack,
+        Feared,
     }
     public CombatState currentState;
     private void Awake()
@@ -30,7 +31,7 @@ public class GhostBuster_Combat : MonoBehaviour
         currentAttackInterval = 0;
         currentPrepareDuration = 0;
         attackInterval = 1.3f;
-        preparingAttackDuration = 2.1f;
+        preparingAttackDuration = 0.4f;
     }
     private void Start()
     {
@@ -63,6 +64,9 @@ public class GhostBuster_Combat : MonoBehaviour
                 AggroState();
                 AttackingState();
                 break;
+            case CombatState.Feared:
+                FearState();
+                break;
         }
     }
     private void AggroState()
@@ -92,7 +96,7 @@ public class GhostBuster_Combat : MonoBehaviour
     }
     private void AttackingState()
     {
-        if (currentPrepareDuration >= preparingAttackDuration)
+        if (currentPrepareDuration < preparingAttackDuration)
         {
             Debug.Log("Preparing To Attack");
             preparingAttackDuration += Time.deltaTime;
@@ -111,6 +115,10 @@ public class GhostBuster_Combat : MonoBehaviour
             currentAttackInterval = 0;
             Debug.Log("Ghost Take Damage " + damage);
         }
+    }
+    private void FearState()
+    {
+
     }
     private void OnDrawGizmos()
     {
