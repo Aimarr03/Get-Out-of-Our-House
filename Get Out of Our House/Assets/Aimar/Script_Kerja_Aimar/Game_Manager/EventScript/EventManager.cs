@@ -34,7 +34,7 @@ public class EventManager : MonoBehaviour
             if (!currentEventAction.AllConditionMet) return;
             currentEventAction.InvokeAction();
             Debug.Log(currentEventAction);
-            if (currentEventAction == null) return;
+            if (eventActions.Count == 0) return;
             currentEventAction = eventActions.Dequeue();
             Instance_OneSecondIntervalEventAction(timerEvent);
         }

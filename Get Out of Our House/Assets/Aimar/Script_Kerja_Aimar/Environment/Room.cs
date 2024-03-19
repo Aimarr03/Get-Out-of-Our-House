@@ -32,7 +32,7 @@ public class Room : MonoBehaviour
         maxHorizontal = bounds.max.x;
         minHorizontal += 1.5f;
         maxHorizontal -= 1.5f;
-        Debug.Log($"min: {minHorizontal} max: {maxHorizontal}");
+        //Debug.Log($"min: {minHorizontal} max: {maxHorizontal}");
     }
     public float GetFloorVerticalBound()
     {

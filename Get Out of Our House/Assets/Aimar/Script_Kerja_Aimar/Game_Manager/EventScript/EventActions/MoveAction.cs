@@ -8,7 +8,7 @@ using UnityEngine;
 public class MoveAction : EventAction
 {
     [SerializeField] private List<Environment_Door> DestinationLocation;
-
+    private Queue<Environment_Door> DestinationQueue;
     public override int GetTimerEvent()
     {
         return timerEvent;
@@ -17,7 +17,17 @@ public class MoveAction : EventAction
     public override void InvokeAction()
     {
         Debug.Log("Invoking Move Action");
+        DestinationQueue = new Queue<Environment_Door>(DestinationLocation);
+        //AltInvokeMoveAction();
         InvokeMoveAction();   
+    }
+    public void AltInvokeMoveAction()
+    {
+        if(DestinationLocation.Count > 0)
+        {
+            Transform targetLocation = DestinationQueue.Dequeue().transform;
+
+        }
     }
     public async void InvokeMoveAction()
     {

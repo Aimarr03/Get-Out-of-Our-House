@@ -42,9 +42,9 @@ public class Environment_Door : MonoBehaviour
 
         ghostBuster.SetCurrentRoom(nextDoor.room);
         ghostBuster.GetMoveAction().GetRandomizedMaxBounds();
-        Camera.main.transform.position = transform.position;
+        Camera.main.transform.position = GetCameraNextDoorPosition();
         
-        ghostBuster.GetMoveAction().StartIdlingTheRoom();
+        //ghostBuster.GetMoveAction().StartIdlingTheRoom();
     }
     private Transform GetCameraTransform()
     {
