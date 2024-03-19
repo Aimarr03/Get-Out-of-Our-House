@@ -1,13 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerControllerManager : MonoBehaviour
 {
     public static PlayerControllerManager instance;
     public event Action InvokeInterract;
-    public event Action InvokeAltInterract;
+    public event Action InvokeAction1;
+    public event Action InvokeAction2;
     private NewPlayerController newPlayerController;
     private void Awake()
     {
@@ -22,13 +24,19 @@ public class PlayerControllerManager : MonoBehaviour
     {
         newPlayerController.PlayerController.Enable();
         newPlayerController.PlayerController.Interract.performed += Interract_performed;
-        newPlayerController.PlayerController.Alt_Interract.performed += Alt_Interract_performed;
+        newPlayerController.PlayerController.Action1.performed += Action1_performed;
+        newPlayerController.PlayerController.Action2.performed += Action2_performed;
     }
 
-    private void Alt_Interract_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    private void Action1_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        Debug.Log("Invoke Alt Interract Manager");
-        InvokeAltInterract?.Invoke();
+        Debug.Log("Invoke Act1 Interract Manager");
+        InvokeAction1?.Invoke();
+    }
+    private void Action2_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        Debug.Log("Invoke Act2 Interract Manager");
+        InvokeAction2?.Invoke();
     }
 
     private void Interract_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
