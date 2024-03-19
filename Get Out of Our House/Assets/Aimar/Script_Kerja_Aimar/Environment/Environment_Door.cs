@@ -7,15 +7,20 @@ public class Environment_Door : MonoBehaviour
     [SerializeField] private Environment_Door nextDoor;
     [SerializeField] private Transform cameraPosition;
     [SerializeField] private Room room;
-    
+    private Vector3 Position;
+    private void Start()
+    {
+        Position = transform.position;
+    }
     public void InterractDoor(NPC npc)
     {
         Vector3 targetPosition = nextDoor.transform.position;
         targetPosition.y = nextDoor.room.GetFloorVerticalBound();
 
+        room.RemoveCharacter(npc.gameObject);
         npc.DesubscribeToRoom(room);
         npc.SubscribeToRoom(nextDoor.room);
-
+        nextDoor.room.AddCharacter(npc.gameObject);
         npc.transform.position = targetPosition;
         //Camera.main.transform.position = GetCameraNextDoorPosition();
     }
@@ -24,10 +29,14 @@ public class Environment_Door : MonoBehaviour
         Vector3 targetPosition = nextDoor.transform.position;
         targetPosition.y = nextDoor.transform.position.y;
         ghost.transform.position = targetPosition;
-
-        ghost.GetCurrentRoom().PlayParticleSystem(false);
+        
+        room.PlayParticleSystem(false);
+        
         ghost.SetCurrentRoom(nextDoor.room);
-        ghost.GetCurrentRoom().PlayParticleSystem(true);
+        room.RemoveCharacter(ghost.gameObject);
+        
+        nextDoor.room.AddCharacter(ghost.gameObject);
+        nextDoor.room.PlayParticleSystem(true);
 
         nextDoor.room.ExecutePlayerEnterRoomEvent();
 
@@ -40,9 +49,12 @@ public class Environment_Door : MonoBehaviour
         targetPosition.y = nextDoor.room.GetFloorVerticalBound();
         ghostBuster.transform.position = targetPosition;
 
+        room.RemoveCharacter(ghostBuster.gameObject);
         ghostBuster.SetCurrentRoom(nextDoor.room);
+        nextDoor.room.AddCharacter(ghostBuster.gameObject);
+        
         ghostBuster.GetMoveAction().GetRandomizedMaxBounds();
-        Camera.main.transform.position = GetCameraNextDoorPosition();
+        //Camera.main.transform.position = GetCameraNextDoorPosition();
         
         //ghostBuster.GetMoveAction().StartIdlingTheRoom();
     }
@@ -54,8 +66,16 @@ public class Environment_Door : MonoBehaviour
     {
         return nextDoor.GetCameraTransform().position;
     }
+    public Room GetRoomNextDoor()
+    {
+        return nextDoor.room;
+    }
     public Room GetRoom()
     {
         return room;
+    }
+    public Vector3 GetPosition()
+    {
+        return Position;
     }
 }

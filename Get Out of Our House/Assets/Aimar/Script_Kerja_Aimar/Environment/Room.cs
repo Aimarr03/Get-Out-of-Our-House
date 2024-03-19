@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Room : MonoBehaviour
@@ -20,12 +21,17 @@ public class Room : MonoBehaviour
     [SerializeField] private SpriteRenderer floor;
     [SerializeField] private float boundMultiplier;
     [SerializeField] private ParticleSystem dustParticleSystem;
+    private List<GameObject> charactersInRoom;
     public RoomType type;
+    private void Awake()
+    {
+        charactersInRoom = new List<GameObject>();
+    }
     private void Start()
     {
-        GetBackgroundHorizontalBound(out float minHorizontal, out float maxHorizontal);
+        GetGroundHorizontalBound(out float minHorizontal, out float maxHorizontal);
     }
-    public void GetBackgroundHorizontalBound(out float minHorizontal, out float maxHorizontal)
+    public void GetGroundHorizontalBound(out float minHorizontal, out float maxHorizontal)
     {
         Bounds bounds = floor.bounds;
         minHorizontal = bounds.min.x;
@@ -54,4 +60,58 @@ public class Room : MonoBehaviour
     {
         playerEnterRoom?.Invoke();
     }
+    public void AddCharacter(GameObject gameObject)
+    {
+        if(gameObject.TryGetComponent<GhostBuster>(out GhostBuster ghostBuster))
+        {
+            foreach(GameObject currentGameObject in charactersInRoom)
+            {
+                if(currentGameObject.TryGetComponent<Ghost>(out Ghost ghostCurrent))
+                {
+                    ghostBuster.SetGhostDetected(ghostCurrent);
+                }
+            }
+        }
+        else if(gameObject.TryGetComponent<Ghost>(out Ghost GhostCome))
+        {
+            foreach (GameObject currentGameObject in charactersInRoom)
+            {
+                if (currentGameObject.TryGetComponent(out GhostBuster GhostCurrentInTheSameRoom))
+                {
+                    GhostCurrentInTheSameRoom.SetGhostDetected(GhostCome);
+                }
+            }
+        }
+        if (CheckCharacter(gameObject)) return;
+        charactersInRoom.Add(gameObject);
+    }
+    public void RemoveCharacter(GameObject gameObject)
+    {
+        if (gameObject.TryGetComponent<Ghost>(out Ghost Ghost))
+        {
+            for (int i = charactersInRoom.Count - 1; i >= 0; i--)
+            {
+                GameObject currentGameObject = charactersInRoom[i];
+                if (currentGameObject.TryGetComponent<GhostBuster>(out GhostBuster ghostBuster))
+                {
+                    ghostBuster.RemoveGhostDetection(Ghost);
+                }
+            }
+        }
+        if (CheckCharacter(gameObject)) charactersInRoom.Remove(gameObject);
+    }
+    public Environment_Door GetDoorToRoom(Room targetRoom)
+    {
+        foreach(Environment_Door environment_Door in doors)
+        {
+            Debug.Log("Environment Door " + environment_Door.GetRoomNextDoor());
+            if(environment_Door.GetRoomNextDoor() == targetRoom)
+            {
+                Debug.Log(environment_Door);
+                return environment_Door;
+            }
+        }
+        return null;
+    }
+    public bool CheckCharacter(GameObject gameObject) => charactersInRoom.Contains(gameObject);
 }

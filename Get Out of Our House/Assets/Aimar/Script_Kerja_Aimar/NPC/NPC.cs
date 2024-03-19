@@ -34,26 +34,10 @@ public class NPC : MonoBehaviour
             dialogueAction = null;
         }
     }
-    public void SubscribeToRoom(Room room)
-    {
-        room.playerEnterRoom += ExecuteDialogue;
-    }
-    public void DesubscribeToRoom(Room room)
-    {
-        room.playerEnterRoom -= ExecuteDialogue;
-    }
+    public void SubscribeToRoom(Room room) => room.playerEnterRoom += ExecuteDialogue;
+    public void DesubscribeToRoom(Room room) => room.playerEnterRoom -= ExecuteDialogue;
+    public NPC_Move_Action GetMoveAction() => moveAction;
+    public void SetDialogueAction(DialogueAction dialogueAction) => this.dialogueAction = dialogueAction;
+    public void TestingMakeFalse() => EventManager.Instance.SetCurrentActionConditions(false);
 
-    public NPC_Move_Action GetMoveAction()
-    {
-        return moveAction;
-    }
-    public void SetDialogueAction(DialogueAction dialogueAction)
-    {
-        this.dialogueAction = dialogueAction;
-    }
-    public void TestingMakeFalse()
-    {
-        EventManager.Instance.SetCurrentActionConditions(false);
-    }
-    
 }
