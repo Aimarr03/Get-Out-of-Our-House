@@ -17,8 +17,26 @@ public class GhostBuster_Move_Action : MonoBehaviour
     }
     private void Start()
     {
+        ghostBuster.GhostDetected += GhostBuster_GhostDetected;
         SetTargetNextRoom();
     }
+
+    private void GhostBuster_GhostDetected(bool detected, Room currentRecordRoomGhost)
+    {
+        if (detected)
+        {
+            Debug.Log("Ghost Detected");
+            StopAllCoroutines();
+        }
+        else
+        {
+            Debug.Log("Ghost Gone");
+            StopAllCoroutines();
+            if (currentRecordRoomGhost != null) SetTargetNextRoom(currentRecordRoomGhost);
+            else StartIdlingTheRoom();
+        }
+    }
+
     private void Update()
     {
         //Transform camera = Camera.main.transform;
@@ -26,7 +44,8 @@ public class GhostBuster_Move_Action : MonoBehaviour
     }
     private IEnumerator MoveActionCoroutine()
     {
-        //Debug.Log(Vector3.Distance(targetLocation, transform.position));
+        Debug.Log(Vector3.Distance(targetLocation, transform.position));
+        Debug.Log(Vector3.Distance(targetLocation, transform.position) > 0.15f);
         while (Vector3.Distance(targetLocation, transform.position) > 0.15f)
         {
             MovingTowards();
@@ -59,7 +78,7 @@ public class GhostBuster_Move_Action : MonoBehaviour
     //THis idling will iterate itself using Recursive until the limit reach 0 then go to the next room
     private IEnumerator SetTargetLocation(Vector3 targetLocation)
     {
-        //Debug.Log("Set Target Location");
+        Debug.Log("Set Target Location " + targetLocation);
         targetLocation.y = transform.position.y;
         this.targetLocation = targetLocation;
         //StopCoroutine(MoveActionCoroutine());
@@ -84,16 +103,25 @@ public class GhostBuster_Move_Action : MonoBehaviour
     {
         Room room = ghostBuster.GetCurrentRoom();
         Environment_Door nextRoom = room.GetRandomDoors();
-        Vector3 nextRoomPosition = nextRoom.transform.position;
+        Vector3 nextRoomPosition = nextRoom.GetPosition();
         Debug.Log($"Ghost Buster Wants to go to {nextRoom}");
         //StopCoroutine(SetTargetLocation(nextRoomPosition));
+        StartCoroutine(SetTargetLocation(nextRoomPosition));
+    }
+    private void SetTargetNextRoom(Room targetRoom)
+    {
+        Environment_Door doorTarget = ghostBuster.GetDoorTowardsCertainRoom(targetRoom);
+        Vector3 nextRoomPosition = doorTarget.GetPosition();
+        Debug.Log($"Ghost Buster Wants to go to {doorTarget}");
+        StopAllCoroutines();
+        currentBounds = 0;
         StartCoroutine(SetTargetLocation(nextRoomPosition));
     }
     public void StartIdlingTheRoom()
     {
         Debug.Log("Ghost Buster Idling");
         Room room = ghostBuster.GetCurrentRoom();
-        room.GetBackgroundHorizontalBound(out float minBound, out float maxBound);
+        room.GetGroundHorizontalBound(out float minBound, out float maxBound);
         //StopCoroutine(SetTargetLocation(minBound, maxBound));
         StartCoroutine(SetTargetLocation(minBound, maxBound));
     }
