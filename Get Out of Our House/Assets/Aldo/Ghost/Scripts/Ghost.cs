@@ -63,9 +63,8 @@ public class Ghost : MonoBehaviour
         {
             isPosessing = false;
         }
-        if(isPosessing && Input.GetKeyDown(KeyCode.F)) 
+        if(isPosessingObject && Input.GetKeyDown(KeyCode.F)) 
         {
-            isPosessingPerson = false;
             isPosessingObject = false;
         }       
     }
