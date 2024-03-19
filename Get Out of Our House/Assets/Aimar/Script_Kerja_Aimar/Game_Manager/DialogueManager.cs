@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -5,6 +6,8 @@ using VIDE_Data;
 
 public class DialogueManager : MonoBehaviour
 {
+    public event Action beginDialogue;
+    public event Action endDialogue;
     [SerializeField] private TextMeshProUGUI dialogueContent;
     [SerializeField] private TextMeshProUGUI nameContent;
 
@@ -20,16 +23,22 @@ public class DialogueManager : MonoBehaviour
     }
     private void Start()
     {
-        OnDialogueStop();
+        dialogueContent.text = "";
+        nameContent.text = "";
+        dialogueHolder.SetActive(false);
     }
     private void OnDialogueStop()
     {
         dialogueContent.text = "";
         nameContent.text = "";
         dialogueHolder.SetActive(false);
+        PlayerControllerManager.instance.InvokeInterract -= OnInterractDialogue;
+        endDialogue?.Invoke();
     }
     private void OnDialogueStart()
     {
+        beginDialogue?.Invoke();
+        PlayerControllerManager.instance.InvokeInterract += OnInterractDialogue;
         dialogueContent.text = "";
         nameContent.text = "";
         dialogueHolder.SetActive(true);
@@ -53,21 +62,29 @@ public class DialogueManager : MonoBehaviour
     }
     private void OnInterractDialogue()
     {
-
+        if(dialogueContent.text == VD.nodeData.comments[VD.nodeData.commentIndex])
+        {
+            VD.Next();
+        }
+        StartCoroutine(ShowDialogueContent());
     }
     private IEnumerator ShowDialogueContent()
     {
-        string text = string.Empty;
-        dialogueContent.text = text;
-        while (text.Length < VD.nodeData.comments[VD.nodeData.commentIndex].Length)
+        if (dialogueContent.text != VD.nodeData.comments[VD.nodeData.commentIndex])
         {
-            text += VD.nodeData.comments[VD.nodeData.commentIndex][text.Length];
+            string text = string.Empty;
             dialogueContent.text = text;
-            yield return new WaitForSeconds(0.01f);
+            nameContent.text = VD.nodeData.tag;
+            while (text.Length < VD.nodeData.comments[VD.nodeData.commentIndex].Length)
+            {
+                text += VD.nodeData.comments[VD.nodeData.commentIndex][text.Length];
+                dialogueContent.text = text;
+                yield return new WaitForSeconds(0.01f);
+            }
         }
-
-        //Automatically call next.
-        yield return new WaitForSeconds(1f);
-        VD.Next();
+        else
+        {
+            dialogueContent.text = VD.nodeData.comments[VD.nodeData.commentIndex];
+        }
     }
 }

@@ -1,13 +1,14 @@
 using System;
-using System.Threading.Tasks;
-using UnityEngine;
+using UnityEngine.Events;
 
 [Serializable]
 public abstract class EventAction
 {
+    public bool AllConditionMet = true;
+    public UnityEvent CheckConditionsRequired;
     public int timerEvent;
     public NPC npc;
-    public abstract bool CheckActionCondition(Action action);
+    
     public abstract void InvokeAction();
     public abstract int GetTimerEvent();
 }

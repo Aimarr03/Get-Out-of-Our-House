@@ -1,0 +1,185 @@
+{
+    "name": "NewPlayerController",
+    "maps": [
+        {
+            "name": "PlayerController",
+            "id": "7f251619-d77b-4c9e-908a-66d963117185",
+            "actions": [
+                {
+                    "name": "Move",
+                    "type": "Value",
+                    "id": "f5eb6185-81ff-4a1a-a1d2-e288df33f9e6",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Interract",
+                    "type": "Button",
+                    "id": "1122a45c-2a3b-4ba2-973e-24ea1cf7ed61",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Alt_Interract",
+                    "type": "Button",
+                    "id": "fbcf0c29-887b-4aad-80f9-1cb0c19ff9ac",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "2D Vector",
+                    "id": "c50539af-60d3-408e-8564-f53d4cb4b84c",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "1a9a2cbb-71ba-43fe-a92b-eff7fd0c66b6",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "4729b563-51bf-4bd2-bede-e858a0277a59",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "831a37f5-127f-4b33-ad2e-4f9b524aa3a8",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "5170d66d-512a-4b29-9ba7-583f689a226c",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "52c22d8f-2dbc-4e1d-92b8-93924f85e473",
+                    "path": "<Gamepad>/dpad",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Joystick",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6570294e-fa9f-4404-98e3-58e7b4353175",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Joystick",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5612921b-1c96-442c-8d31-383167468889",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "Interract",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6a7fd4f6-4512-437a-8a33-56e508ba3727",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "Joystick",
+                    "action": "Interract",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d8b31df7-24ea-4603-8f3d-604a31685e27",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "Alt_Interract",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "df1a2195-ea1d-4b3f-8e38-363f0af9da1b",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "Joystick",
+                    "action": "Alt_Interract",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "PC",
+            "bindingGroup": "PC",
+            "devices": [
+                {
+                    "devicePath": "<Keyboard>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        },
+        {
+            "name": "Joystick",
+            "bindingGroup": "Joystick",
+            "devices": [
+                {
+                    "devicePath": "<Gamepad>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        }
+    ]
+}

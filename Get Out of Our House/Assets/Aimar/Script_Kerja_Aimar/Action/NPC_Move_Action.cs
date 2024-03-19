@@ -20,6 +20,7 @@ public class NPC_Move_Action : MonoBehaviour
     [SerializeField] private float movementSpeed;
     
     private NPC npc;
+    private MoveAction moveAction;
     private void Awake()
     {
         npc = GetComponent<NPC>();
@@ -63,7 +64,10 @@ public class NPC_Move_Action : MonoBehaviour
         Vector3 currentPosition = transform.position;
         transform.position = Vector3.MoveTowards(currentPosition, targetLocation, movementSpeed * Time.deltaTime);
     }
-     
+     public void SetMoveAction(MoveAction moveAction)
+    {
+        this.moveAction = moveAction;
+    }
     public void StartAction()
     {
         

@@ -9,7 +9,31 @@ public class PossesingObject : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
+        DialogueManager.instance.endDialogue += Instance_endDialogue;
+        DialogueManager.instance.beginDialogue += Instance_beginDialogue;
+    }
+
+    private void Instance_beginDialogue()
+    {
+        PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
+    }
+
+    private void Instance_endDialogue()
+    {
+        PlayerControllerManager.instance.InvokeInterract -= Instance_InvokeInterract;
+    }
+
+    private void Instance_InvokeInterract()
+    {
+        if (!Ghost.isPosessingObject && otherObject != null)
+        {
+            Debug.Log("Posess Object");
+            transform.position = otherObject.transform.position;
+            otherObject.GetComponent<SpriteRenderer>().color = Color.yellow;
+            GetComponent<SpriteRenderer>().enabled = false;
+            Ghost.isPosessingObject = true;
+        }
     }
 
     // Update is called once per frame

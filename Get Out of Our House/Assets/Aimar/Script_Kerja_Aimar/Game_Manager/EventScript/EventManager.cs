@@ -4,15 +4,23 @@ using UnityEngine;
 
 public class EventManager : MonoBehaviour
 {
+    public static EventManager Instance;
     [SerializeField] private Queue<EventAction> eventActions;
     private EventAction currentEventAction;
-    // Start is called before the first frame update
+
+    private void Awake()
+    {
+        if (Instance != null) return;
+        Instance = this;
+    }
+
     void Start()
     {
         Queue<EventAction> moveActions = new Queue<EventAction>(DataEvents.instance._ListOfMoveAction);
         Queue<EventAction> dialogueActions = new Queue<EventAction>(DataEvents.instance._ListOfDialogueAction);
         eventActions = CombinesQueue(moveActions, dialogueActions);
         eventActions = new Queue<EventAction>(eventActions.OrderBy(ac => ac.timerEvent));
+        if (eventActions.Count == 0) return;
         currentEventAction = eventActions.Dequeue();
         TimeManager.instance.OneSecondIntervalEventAction += Instance_OneSecondIntervalEventAction;
     }
@@ -22,9 +30,13 @@ public class EventManager : MonoBehaviour
         if(currentEventAction == null) return;
         if(currentEventAction.timerEvent == timerEvent)
         {
+            currentEventAction.CheckConditionsRequired?.Invoke();
+            if (!currentEventAction.AllConditionMet) return;
             currentEventAction.InvokeAction();
             Debug.Log(currentEventAction);
+            if (eventActions.Count == 0) return;
             currentEventAction = eventActions.Dequeue();
+            Instance_OneSecondIntervalEventAction(timerEvent);
         }
     }
     private Queue<EventAction> CombinesQueue<EventAction>(Queue<EventAction> queue01, Queue<EventAction> queue02)
@@ -44,9 +56,9 @@ public class EventManager : MonoBehaviour
         }
         return combinedQueue;
     }
-    // Update is called once per frame
-    void Update()
+    public void SetCurrentActionConditions(bool input)
     {
-        
+        if (!currentEventAction.AllConditionMet) return;
+        currentEventAction.AllConditionMet = input;
     }
 }
