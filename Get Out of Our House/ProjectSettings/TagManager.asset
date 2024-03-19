@@ -6,6 +6,8 @@ TagManager:
   tags:
   - object
   - People
+  - PeopleInside
+  - Knive
   layers:
   - Default
   - TransparentFX
@@ -15,8 +17,8 @@ TagManager:
   - UI
   - Ghost
   - NPC
-  - Interrractable Environment
-  - 
+  - Interractable Environment
+  - GhostInvisble
   - 
   - 
   - 

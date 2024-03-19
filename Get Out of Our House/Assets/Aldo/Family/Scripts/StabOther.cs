@@ -4,23 +4,37 @@ using UnityEngine;
 
 public class StabOther : MonoBehaviour
 {
+    private GameObject otherPeople;
     // Start is called before the first frame update
     void Start()
     {
-     
+        PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Instance_InvokeInterract()
     {
-        
+        Debug.Log("Menusuk Orang");
+        if (Ghost.isPosessingPerson && otherPeople != null)
+        {
+            Destroy(otherPeople);
+        }
     }
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.tag == "People")
+        if(otherPeople == null && collision.tag == "PeopleInside")
         {
-            Debug.Log("Ketemu orang Lain");
+            otherPeople = collision.gameObject.transform.parent.gameObject;
+            Debug.Log("Ketemu orang Lain " + otherPeople.name);
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (otherPeople == null && collision.tag == "PeopleInside")
+        {
+            Debug.Log("Menjauhi orang Lain");
+            otherPeople = null;
         }
     }
 }
