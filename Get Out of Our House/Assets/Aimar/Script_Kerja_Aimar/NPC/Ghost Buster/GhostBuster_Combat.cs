@@ -99,7 +99,7 @@ public class GhostBuster_Combat : MonoBehaviour
         if (currentPrepareDuration < preparingAttackDuration)
         {
             Debug.Log("Preparing To Attack");
-            preparingAttackDuration += Time.deltaTime;
+            currentPrepareDuration += Time.deltaTime;
             return;
         }
         if (currentState == CombatState.Aggro) return;
@@ -122,11 +122,11 @@ public class GhostBuster_Combat : MonoBehaviour
     }
     private void OnDrawGizmos()
     {
-        /*Vector3 offsetPosition = new Vector3(transform.position.x,transform.position.y + aggroSize.y/2, transform.position.z);
+        /*Vector3 offsetPosition = new Vector3(transform.position.x, transform.position.y + aggroSize.y / 2, transform.position.z);
 
         Gizmos.color = Color.yellow;
         Gizmos.DrawCube(offsetPosition, aggroSize);
-        offsetPosition = new Vector3(transform.position.x, transform.position.y + attackSize.y/2, transform.position.z);
+        offsetPosition = new Vector3(transform.position.x, transform.position.y + attackSize.y / 2, transform.position.z);
         Gizmos.color = Color.red;
         Gizmos.DrawCube(offsetPosition, attackSize);*/
     }
