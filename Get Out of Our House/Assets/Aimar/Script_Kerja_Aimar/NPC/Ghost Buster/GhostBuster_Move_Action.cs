@@ -9,7 +9,6 @@ public class GhostBuster_Move_Action : MonoBehaviour
     [SerializeField] private float movementSpeed;
     [SerializeField] private int maxBounds;
     [SerializeField] private LayerMask interractableEnvironment;
-    private bool isMoving;
     private int currentBounds;
     private GhostBuster ghostBuster;
     private void Awake()
@@ -18,13 +17,12 @@ public class GhostBuster_Move_Action : MonoBehaviour
     }
     private void Start()
     {
-        isMoving = false;
         SetTargetNextRoom();
     }
     private void Update()
     {
-        Transform camera = Camera.main.transform;
-        camera.position = new Vector3(transform.position.x, camera.position.y, camera.position.z);
+        //Transform camera = Camera.main.transform;
+        //camera.position = new Vector3(transform.position.x, camera.position.y, camera.position.z);
     }
     private IEnumerator MoveActionCoroutine()
     {
