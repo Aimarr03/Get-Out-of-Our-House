@@ -9,7 +9,6 @@ public class GhostBuster_Move_Action : MonoBehaviour
     [SerializeField] private float movementSpeed;
     [SerializeField] private int maxBounds;
     [SerializeField] private LayerMask interractableEnvironment;
-    private bool isMoving;
     private int currentBounds;
     private GhostBuster ghostBuster;
     private void Awake()
@@ -18,7 +17,6 @@ public class GhostBuster_Move_Action : MonoBehaviour
     }
     private void Start()
     {
-        isMoving = false;
         SetTargetNextRoom();
     }
     private void Update()

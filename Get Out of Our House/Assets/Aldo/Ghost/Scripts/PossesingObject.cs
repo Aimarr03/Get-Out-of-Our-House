@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PossesingObject : MonoBehaviour
@@ -26,47 +27,43 @@ public class PossesingObject : MonoBehaviour
 
     private void Instance_InvokeInterract()
     {
-        if (!Ghost.isPosessingObject && otherObject != null)
+        if (!Ghost.isPosessing && otherObject != null)
         {
-            Debug.Log("Posess Object");
-            transform.position = otherObject.transform.position;
-            otherObject.GetComponent<SpriteRenderer>().color = Color.yellow;
-            GetComponent<SpriteRenderer>().enabled = false;
+            Debug.Log("Posessing Object");
             Ghost.isPosessingObject = true;
+            otherObject.GetComponent<Objects>().isPosessed = true;
+            return;
+        }
+
+        if (Ghost.isPosessingObject)
+        {
+            Debug.Log("Keluar dari Object");
+            Ghost.isPosessingObject = false;
+            otherObject.GetComponent<Objects>().isPosessed = false;
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(otherObject != null && otherObject.GetComponent<Objects>().canPosessed)
+        /*if(otherObject != null && otherObject.GetComponent<Objects>().canPosessed && Ghost.isPosessing)
         {
             ReadyPossessObject();
-        }
-        else if(!Ghost.isPosessingObject && !Ghost.isPosessingPerson)
-        {
-            GetComponent<SpriteRenderer>().enabled = true;
-        }
+        }*/
         if (Ghost.isPosessingObject)
         {
             transform.position = otherObject.transform.position;
         }
     }
 
-    void ReadyPossessObject()
+    /*void ReadyPossessObject()
     {
-        Debug.Log("Ready Posess Object");
-        if (Input.GetKeyDown(KeyCode.F) && !Ghost.isPosessingObject)
-        {
-            Debug.Log("Posess Object");
-            Ghost.isPosessingObject = true;
-        }
-
+        //Debug.Log("Ready Posess Object");
         if (Ghost.isPosessingObject)
         {
             otherObject.GetComponent<Objects>().possess();
         }
-    }
+    }*/
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -74,7 +71,7 @@ public class PossesingObject : MonoBehaviour
         {
             otherObject = collision.gameObject;
             otherObject.GetComponent<SpriteRenderer>().color = Color.black;
-            Debug.Log("Siap Merasuki " + gameObject);
+            //Debug.Log("Siap Merasuki " + gameObject);
         }
     }
 

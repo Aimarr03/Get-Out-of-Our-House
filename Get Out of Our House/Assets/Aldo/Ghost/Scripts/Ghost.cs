@@ -5,9 +5,9 @@ using UnityEngine.UIElements;
 
 public class Ghost : MonoBehaviour
 {
-    public float speed;
+    public static float speed = 6;
     private Rigidbody2D rb;
-    private bool canMove =true;
+    public static bool canMove = true;
     public static bool isPosessingObject;
     public static bool isPosessingPerson;
     public static bool isPosessing;
@@ -16,7 +16,6 @@ public class Ghost : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        canMove = true;
         rb = GetComponent<Rigidbody2D>();
         //currentRoom.PlayParticleSystem(true);
         PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
@@ -52,27 +51,33 @@ public class Ghost : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if (!canMove) return;
-        moving();
+        Debug.Log("Person " + isPosessingPerson);
+        Debug.Log("Object " + isPosessingObject);
+        Debug.Log("Can Moving " + canMove);
+        if (!canMove) Debug.Log("Pernah False");
         if (isPosessingObject || isPosessingPerson)
         {
             isPosessing = true;
+            canMove = false;
             GetComponent<SpriteRenderer>().enabled = false;
+            gameObject.layer = 8; 
+            Debug.Log("Masuk Posessing Cuy!");
         }
         else
         {
+            GetComponent<SpriteRenderer>().enabled = true;
             isPosessing = false;
+            gameObject.layer = 6; 
+            canMove = true;
         }
-        if(isPosessingObject && Input.GetKeyDown(KeyCode.F)) 
-        {
-            isPosessingObject = false;
-        }       
+        if (!canMove) return;
+        moving();
     }
 
     void moving()
     {
         Vector2 inputMovement = PlayerControllerManager.instance.GetVector2Input();
-        Debug.Log(inputMovement);
+        //Debug.Log(inputMovement);
         //float movingX = Input.GetAxis("Horizontal");
         //float movingY = Input.GetAxis("Vertical");
         rb.velocity = new Vector2(inputMovement.x * speed , inputMovement.y * speed );
