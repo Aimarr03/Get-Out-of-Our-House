@@ -11,8 +11,8 @@ public class PosessPerson : MonoBehaviour
     void Start()
     {
         PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
-        //DialogueManager.instance.beginDialogue += Instance_beginDialogue;
-        //DialogueManager.instance.endDialogue += Instance_endDialogue;
+        DialogueManager.instance.beginDialogue += Instance_beginDialogue;
+        DialogueManager.instance.endDialogue += Instance_endDialogue;
     }
 
     private void Instance_endDialogue()
@@ -30,6 +30,8 @@ public class PosessPerson : MonoBehaviour
         if (targetPosess != null && targetPosess.GetComponent<FearMeter>().fearMeter >= 5)
         {
             Debug.Log("Poesess Person");
+            targetPosess.GetComponent<SpriteRenderer>().color = Color.blue;
+            GetComponent<SpriteRenderer>().enabled = false;
             targetPosess.GetComponent<Posessed>().isPosessed = true;
             Ghost.isPosessingPerson = true;
         }
@@ -38,24 +40,27 @@ public class PosessPerson : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Ghost.isPosessingPerson)
+        if (targetPosess != null &&  Input.GetKeyDown(KeyCode.F) && targetPosess.GetComponent<FearMeter>().fearMeter >= 5) 
         {
-            transform.position = targetPosess.transform.position;
+            Debug.Log("Poesess Person");
+            targetPosess.GetComponent<SpriteRenderer>().color = Color.blue;
+            GetComponent<SpriteRenderer>().enabled = false;
+            targetPosess.GetComponent<Posessed>().isPosessed = true; 
+            Ghost.isPosessingPerson = true;
         }
     }
     
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(targetPosess == null && collision.tag== "PeopleInside") 
+        if(targetPosess == null && collision.tag=="People") 
         {
-            //Debug.Log("Ready Poesess Person");
-            targetPosess = collision.gameObject.transform.parent.gameObject;
-            Debug.Log("Ready to posess " + targetPosess.name);
+            Debug.Log("Ready Poesess Person");
+            targetPosess = collision.gameObject;
         }
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (!Ghost.isPosessing && targetPosess != null && collision.tag == "PeopleInside")
+        if (targetPosess != null && collision.tag == "People")
         {
             targetPosess = null;
         }

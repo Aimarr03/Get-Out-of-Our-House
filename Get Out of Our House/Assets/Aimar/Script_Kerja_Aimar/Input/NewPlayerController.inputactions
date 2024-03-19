@@ -24,18 +24,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Action1",
+                    "name": "Alt_Interract",
                     "type": "Button",
                     "id": "fbcf0c29-887b-4aad-80f9-1cb0c19ff9ac",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Action2",
-                    "type": "Button",
-                    "id": "21a98942-9bb3-432b-bbff-2358ad69a2d7",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -123,7 +114,7 @@
                 {
                     "name": "",
                     "id": "5612921b-1c96-442c-8d31-383167468889",
-                    "path": "<Keyboard>/f",
+                    "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "PC",
@@ -134,7 +125,7 @@
                 {
                     "name": "",
                     "id": "6a7fd4f6-4512-437a-8a33-56e508ba3727",
-                    "path": "<Gamepad>/buttonSouth",
+                    "path": "<Gamepad>/buttonWest",
                     "interactions": "Press",
                     "processors": "",
                     "groups": "Joystick",
@@ -149,40 +140,18 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "PC",
-                    "action": "Action1",
+                    "action": "Alt_Interract",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "df1a2195-ea1d-4b3f-8e38-363f0af9da1b",
-                    "path": "<Gamepad>/leftShoulder",
+                    "path": "<Gamepad>/buttonNorth",
                     "interactions": "Press",
                     "processors": "",
                     "groups": "Joystick",
-                    "action": "Action1",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "f4939f8d-ee73-4c05-baa2-a970decac0d7",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "PC",
-                    "action": "Action2",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "b4a7b386-c44e-4a3b-8a80-d39b2a2ca3f1",
-                    "path": "<Gamepad>/rightShoulder",
-                    "interactions": "Press",
-                    "processors": "",
-                    "groups": "Joystick",
-                    "action": "Action2",
+                    "action": "Alt_Interract",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PossesingObject : MonoBehaviour
@@ -11,8 +10,8 @@ public class PossesingObject : MonoBehaviour
     void Start()
     {
         PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
-        //DialogueManager.instance.endDialogue += Instance_endDialogue;
-        //DialogueManager.instance.beginDialogue += Instance_beginDialogue;
+        DialogueManager.instance.endDialogue += Instance_endDialogue;
+        DialogueManager.instance.beginDialogue += Instance_beginDialogue;
     }
 
     private void Instance_beginDialogue()
@@ -27,43 +26,46 @@ public class PossesingObject : MonoBehaviour
 
     private void Instance_InvokeInterract()
     {
-        if (!Ghost.isPosessing && otherObject != null)
+        if (!Ghost.isPosessingObject && otherObject != null)
         {
-            Debug.Log("Posessing Object");
+            Debug.Log("Posess Object");
+            transform.position = otherObject.transform.position;
+            otherObject.GetComponent<SpriteRenderer>().color = Color.yellow;
+            GetComponent<SpriteRenderer>().enabled = false;
             Ghost.isPosessingObject = true;
-            otherObject.GetComponent<Objects>().isPosessed = true;
-            return;
-        }
-
-        if (Ghost.isPosessingObject)
-        {
-            Debug.Log("Keluar dari Object");
-            Ghost.isPosessingObject = false;
-            otherObject.GetComponent<Objects>().isPosessed = false;
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        /*if(otherObject != null && otherObject.GetComponent<Objects>().canPosessed && Ghost.isPosessing)
+        if(otherObject != null && otherObject.GetComponent<Objects>().canPosessed)
         {
             ReadyPossessObject();
-        }*/
-        if (Ghost.isPosessingObject)
+        }
+        else if(!Ghost.isPosessingObject && !Ghost.isPosessingPerson)
         {
-            transform.position = otherObject.transform.position;
+            GetComponent<SpriteRenderer>().enabled = true;
         }
     }
 
-    /*void ReadyPossessObject()
+    void ReadyPossessObject()
     {
-        //Debug.Log("Ready Posess Object");
+        Debug.Log("Ready Posess Object");
+        if (Input.GetKeyDown(KeyCode.F) && !Ghost.isPosessingObject)
+        {
+            Debug.Log("Posess Object");
+            transform.position = otherObject.transform.position;
+            otherObject.GetComponent<SpriteRenderer>().color = Color.yellow;
+            GetComponent<SpriteRenderer>().enabled = false;
+            Ghost.isPosessingObject = true;
+        }
+
         if (Ghost.isPosessingObject)
         {
             otherObject.GetComponent<Objects>().possess();
         }
-    }*/
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -71,7 +73,7 @@ public class PossesingObject : MonoBehaviour
         {
             otherObject = collision.gameObject;
             otherObject.GetComponent<SpriteRenderer>().color = Color.black;
-            //Debug.Log("Siap Merasuki " + gameObject);
+            Debug.Log("Siap Merasuki " + gameObject);
         }
     }
 

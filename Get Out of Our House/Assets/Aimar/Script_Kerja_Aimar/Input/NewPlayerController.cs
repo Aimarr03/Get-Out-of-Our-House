@@ -46,18 +46,9 @@ public partial class @NewPlayerController: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Action1"",
+                    ""name"": ""Alt_Interract"",
                     ""type"": ""Button"",
                     ""id"": ""fbcf0c29-887b-4aad-80f9-1cb0c19ff9ac"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Action2"",
-                    ""type"": ""Button"",
-                    ""id"": ""21a98942-9bb3-432b-bbff-2358ad69a2d7"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -145,7 +136,7 @@ public partial class @NewPlayerController: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""5612921b-1c96-442c-8d31-383167468889"",
-                    ""path"": ""<Keyboard>/f"",
+                    ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""PC"",
@@ -156,7 +147,7 @@ public partial class @NewPlayerController: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""6a7fd4f6-4512-437a-8a33-56e508ba3727"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""path"": ""<Gamepad>/buttonWest"",
                     ""interactions"": ""Press"",
                     ""processors"": """",
                     ""groups"": ""Joystick"",
@@ -171,40 +162,18 @@ public partial class @NewPlayerController: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""PC"",
-                    ""action"": ""Action1"",
+                    ""action"": ""Alt_Interract"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
                     ""id"": ""df1a2195-ea1d-4b3f-8e38-363f0af9da1b"",
-                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
                     ""interactions"": ""Press"",
                     ""processors"": """",
                     ""groups"": ""Joystick"",
-                    ""action"": ""Action1"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""f4939f8d-ee73-4c05-baa2-a970decac0d7"",
-                    ""path"": ""<Keyboard>/e"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""PC"",
-                    ""action"": ""Action2"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""b4a7b386-c44e-4a3b-8a80-d39b2a2ca3f1"",
-                    ""path"": ""<Gamepad>/rightShoulder"",
-                    ""interactions"": ""Press"",
-                    ""processors"": """",
-                    ""groups"": ""Joystick"",
-                    ""action"": ""Action2"",
+                    ""action"": ""Alt_Interract"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -240,8 +209,7 @@ public partial class @NewPlayerController: IInputActionCollection2, IDisposable
         m_PlayerController = asset.FindActionMap("PlayerController", throwIfNotFound: true);
         m_PlayerController_Move = m_PlayerController.FindAction("Move", throwIfNotFound: true);
         m_PlayerController_Interract = m_PlayerController.FindAction("Interract", throwIfNotFound: true);
-        m_PlayerController_Action1 = m_PlayerController.FindAction("Action1", throwIfNotFound: true);
-        m_PlayerController_Action2 = m_PlayerController.FindAction("Action2", throwIfNotFound: true);
+        m_PlayerController_Alt_Interract = m_PlayerController.FindAction("Alt_Interract", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -305,16 +273,14 @@ public partial class @NewPlayerController: IInputActionCollection2, IDisposable
     private List<IPlayerControllerActions> m_PlayerControllerActionsCallbackInterfaces = new List<IPlayerControllerActions>();
     private readonly InputAction m_PlayerController_Move;
     private readonly InputAction m_PlayerController_Interract;
-    private readonly InputAction m_PlayerController_Action1;
-    private readonly InputAction m_PlayerController_Action2;
+    private readonly InputAction m_PlayerController_Alt_Interract;
     public struct PlayerControllerActions
     {
         private @NewPlayerController m_Wrapper;
         public PlayerControllerActions(@NewPlayerController wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_PlayerController_Move;
         public InputAction @Interract => m_Wrapper.m_PlayerController_Interract;
-        public InputAction @Action1 => m_Wrapper.m_PlayerController_Action1;
-        public InputAction @Action2 => m_Wrapper.m_PlayerController_Action2;
+        public InputAction @Alt_Interract => m_Wrapper.m_PlayerController_Alt_Interract;
         public InputActionMap Get() { return m_Wrapper.m_PlayerController; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -330,12 +296,9 @@ public partial class @NewPlayerController: IInputActionCollection2, IDisposable
             @Interract.started += instance.OnInterract;
             @Interract.performed += instance.OnInterract;
             @Interract.canceled += instance.OnInterract;
-            @Action1.started += instance.OnAction1;
-            @Action1.performed += instance.OnAction1;
-            @Action1.canceled += instance.OnAction1;
-            @Action2.started += instance.OnAction2;
-            @Action2.performed += instance.OnAction2;
-            @Action2.canceled += instance.OnAction2;
+            @Alt_Interract.started += instance.OnAlt_Interract;
+            @Alt_Interract.performed += instance.OnAlt_Interract;
+            @Alt_Interract.canceled += instance.OnAlt_Interract;
         }
 
         private void UnregisterCallbacks(IPlayerControllerActions instance)
@@ -346,12 +309,9 @@ public partial class @NewPlayerController: IInputActionCollection2, IDisposable
             @Interract.started -= instance.OnInterract;
             @Interract.performed -= instance.OnInterract;
             @Interract.canceled -= instance.OnInterract;
-            @Action1.started -= instance.OnAction1;
-            @Action1.performed -= instance.OnAction1;
-            @Action1.canceled -= instance.OnAction1;
-            @Action2.started -= instance.OnAction2;
-            @Action2.performed -= instance.OnAction2;
-            @Action2.canceled -= instance.OnAction2;
+            @Alt_Interract.started -= instance.OnAlt_Interract;
+            @Alt_Interract.performed -= instance.OnAlt_Interract;
+            @Alt_Interract.canceled -= instance.OnAlt_Interract;
         }
 
         public void RemoveCallbacks(IPlayerControllerActions instance)
@@ -391,7 +351,6 @@ public partial class @NewPlayerController: IInputActionCollection2, IDisposable
     {
         void OnMove(InputAction.CallbackContext context);
         void OnInterract(InputAction.CallbackContext context);
-        void OnAction1(InputAction.CallbackContext context);
-        void OnAction2(InputAction.CallbackContext context);
+        void OnAlt_Interract(InputAction.CallbackContext context);
     }
 }

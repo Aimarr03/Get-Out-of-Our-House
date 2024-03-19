@@ -5,9 +5,9 @@ using UnityEngine.UIElements;
 
 public class Ghost : MonoBehaviour
 {
-    public static float speed = 6;
+    public float speed;
     private Rigidbody2D rb;
-    public static bool canMove = true;
+    private bool canMove;
     public static bool isPosessingObject;
     public static bool isPosessingPerson;
     public static bool isPosessing;
@@ -16,11 +16,12 @@ public class Ghost : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        canMove = true;
         rb = GetComponent<Rigidbody2D>();
-        //currentRoom.PlayParticleSystem(true);
+        currentRoom.PlayParticleSystem(true);
         PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
-        //DialogueManager.instance.beginDialogue += Instance_beginDialogue;
-        //DialogueManager.instance.endDialogue += Instance_endDialogue;
+        DialogueManager.instance.beginDialogue += Instance_beginDialogue;
+        DialogueManager.instance.endDialogue += Instance_endDialogue;
     }
 
     private void Instance_endDialogue()
@@ -51,33 +52,27 @@ public class Ghost : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Person " + isPosessingPerson);
-        Debug.Log("Object " + isPosessingObject);
-        Debug.Log("Can Moving " + canMove);
-        if (!canMove) Debug.Log("Pernah False");
+        if (!canMove) return;
+        moving();
         if (isPosessingObject || isPosessingPerson)
         {
             isPosessing = true;
-            canMove = false;
-            GetComponent<SpriteRenderer>().enabled = false;
-            gameObject.layer = 8; 
-            Debug.Log("Masuk Posessing Cuy!");
         }
         else
         {
-            GetComponent<SpriteRenderer>().enabled = true;
             isPosessing = false;
-            gameObject.layer = 6; 
-            canMove = true;
         }
-        if (!canMove) return;
-        moving();
+        if(isPosessingPerson)
+        {
+            transform.position = GetComponent<PosessPerson>().targetPosess.transform.position;
+        }
+        
     }
 
     void moving()
     {
         Vector2 inputMovement = PlayerControllerManager.instance.GetVector2Input();
-        //Debug.Log(inputMovement);
+        
         //float movingX = Input.GetAxis("Horizontal");
         //float movingY = Input.GetAxis("Vertical");
         rb.velocity = new Vector2(inputMovement.x * speed , inputMovement.y * speed );
