@@ -138,5 +138,8 @@ public class GhostBuster_Move_Action : MonoBehaviour
             }
         }
     }
-    
+    public float GetMovementSpeed()
+    {
+        return movementSpeed;
+    }
 }
