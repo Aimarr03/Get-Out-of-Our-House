@@ -11,8 +11,8 @@ public class PosessPerson : MonoBehaviour
     void Start()
     {
         PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
-        DialogueManager.instance.beginDialogue += Instance_beginDialogue;
-        DialogueManager.instance.endDialogue += Instance_endDialogue;
+        //DialogueManager.instance.beginDialogue += Instance_beginDialogue;
+        //DialogueManager.instance.endDialogue += Instance_endDialogue;
     }
 
     private void Instance_endDialogue()
@@ -43,10 +43,12 @@ public class PosessPerson : MonoBehaviour
         if (targetPosess != null &&  Input.GetKeyDown(KeyCode.F) && targetPosess.GetComponent<FearMeter>().fearMeter >= 5) 
         {
             Debug.Log("Poesess Person");
-            targetPosess.GetComponent<SpriteRenderer>().color = Color.blue;
-            GetComponent<SpriteRenderer>().enabled = false;
             targetPosess.GetComponent<Posessed>().isPosessed = true; 
             Ghost.isPosessingPerson = true;
+        }
+        if (Ghost.isPosessingPerson)
+        {
+            transform.position = targetPosess.transform.position;
         }
     }
     

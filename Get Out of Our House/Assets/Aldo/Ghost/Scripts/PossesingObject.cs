@@ -10,8 +10,8 @@ public class PossesingObject : MonoBehaviour
     void Start()
     {
         PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
-        DialogueManager.instance.endDialogue += Instance_endDialogue;
-        DialogueManager.instance.beginDialogue += Instance_beginDialogue;
+        //DialogueManager.instance.endDialogue += Instance_endDialogue;
+        //DialogueManager.instance.beginDialogue += Instance_beginDialogue;
     }
 
     private void Instance_beginDialogue()
@@ -47,6 +47,10 @@ public class PossesingObject : MonoBehaviour
         {
             GetComponent<SpriteRenderer>().enabled = true;
         }
+        if (Ghost.isPosessingObject)
+        {
+            transform.position = otherObject.transform.position;
+        }
     }
 
     void ReadyPossessObject()
@@ -55,9 +59,6 @@ public class PossesingObject : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F) && !Ghost.isPosessingObject)
         {
             Debug.Log("Posess Object");
-            transform.position = otherObject.transform.position;
-            otherObject.GetComponent<SpriteRenderer>().color = Color.yellow;
-            GetComponent<SpriteRenderer>().enabled = false;
             Ghost.isPosessingObject = true;
         }
 

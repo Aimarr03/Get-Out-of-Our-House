@@ -22,6 +22,10 @@ public class Posessed : MonoBehaviour
         {
             moving();
         }
+        if (isPosessed)
+        { 
+            GetComponent<SpriteRenderer>().color = Color.blue;
+        }
     }
 
     void moving()

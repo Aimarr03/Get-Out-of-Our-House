@@ -7,7 +7,7 @@ public class Ghost : MonoBehaviour
 {
     public float speed;
     private Rigidbody2D rb;
-    private bool canMove;
+    private bool canMove =true;
     public static bool isPosessingObject;
     public static bool isPosessingPerson;
     public static bool isPosessing;
@@ -18,10 +18,10 @@ public class Ghost : MonoBehaviour
     {
         canMove = true;
         rb = GetComponent<Rigidbody2D>();
-        currentRoom.PlayParticleSystem(true);
+        //currentRoom.PlayParticleSystem(true);
         PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
-        DialogueManager.instance.beginDialogue += Instance_beginDialogue;
-        DialogueManager.instance.endDialogue += Instance_endDialogue;
+        //DialogueManager.instance.beginDialogue += Instance_beginDialogue;
+        //DialogueManager.instance.endDialogue += Instance_endDialogue;
     }
 
     private void Instance_endDialogue()
@@ -52,27 +52,28 @@ public class Ghost : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!canMove) return;
+        //if (!canMove) return;
         moving();
         if (isPosessingObject || isPosessingPerson)
         {
             isPosessing = true;
+            GetComponent<SpriteRenderer>().enabled = false;
         }
         else
         {
             isPosessing = false;
         }
-        if(isPosessingPerson)
+        if(isPosessing && Input.GetKeyDown(KeyCode.F)) 
         {
-            transform.position = GetComponent<PosessPerson>().targetPosess.transform.position;
-        }
-        
+            isPosessingPerson = false;
+            isPosessingObject = false;
+        }       
     }
 
     void moving()
     {
         Vector2 inputMovement = PlayerControllerManager.instance.GetVector2Input();
-        
+        Debug.Log(inputMovement);
         //float movingX = Input.GetAxis("Horizontal");
         //float movingY = Input.GetAxis("Vertical");
         rb.velocity = new Vector2(inputMovement.x * speed , inputMovement.y * speed );
