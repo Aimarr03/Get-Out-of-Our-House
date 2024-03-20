@@ -62,6 +62,15 @@ public partial class @NewPlayerController: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Ultimate"",
+                    ""type"": ""Button"",
+                    ""id"": ""543b3c19-a65a-4d2d-8b8d-6fa385986fb2"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -207,6 +216,28 @@ public partial class @NewPlayerController: IInputActionCollection2, IDisposable
                     ""action"": ""Action2"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1925d825-59dd-474f-8992-b370a3496c1c"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Joystick"",
+                    ""action"": ""Ultimate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c28cebf3-9c65-41ad-aea3-459f578bcad4"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PC"",
+                    ""action"": ""Ultimate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -242,6 +273,7 @@ public partial class @NewPlayerController: IInputActionCollection2, IDisposable
         m_PlayerController_Interract = m_PlayerController.FindAction("Interract", throwIfNotFound: true);
         m_PlayerController_Action1 = m_PlayerController.FindAction("Action1", throwIfNotFound: true);
         m_PlayerController_Action2 = m_PlayerController.FindAction("Action2", throwIfNotFound: true);
+        m_PlayerController_Ultimate = m_PlayerController.FindAction("Ultimate", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -307,6 +339,7 @@ public partial class @NewPlayerController: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerController_Interract;
     private readonly InputAction m_PlayerController_Action1;
     private readonly InputAction m_PlayerController_Action2;
+    private readonly InputAction m_PlayerController_Ultimate;
     public struct PlayerControllerActions
     {
         private @NewPlayerController m_Wrapper;
@@ -315,6 +348,7 @@ public partial class @NewPlayerController: IInputActionCollection2, IDisposable
         public InputAction @Interract => m_Wrapper.m_PlayerController_Interract;
         public InputAction @Action1 => m_Wrapper.m_PlayerController_Action1;
         public InputAction @Action2 => m_Wrapper.m_PlayerController_Action2;
+        public InputAction @Ultimate => m_Wrapper.m_PlayerController_Ultimate;
         public InputActionMap Get() { return m_Wrapper.m_PlayerController; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -336,6 +370,9 @@ public partial class @NewPlayerController: IInputActionCollection2, IDisposable
             @Action2.started += instance.OnAction2;
             @Action2.performed += instance.OnAction2;
             @Action2.canceled += instance.OnAction2;
+            @Ultimate.started += instance.OnUltimate;
+            @Ultimate.performed += instance.OnUltimate;
+            @Ultimate.canceled += instance.OnUltimate;
         }
 
         private void UnregisterCallbacks(IPlayerControllerActions instance)
@@ -352,6 +389,9 @@ public partial class @NewPlayerController: IInputActionCollection2, IDisposable
             @Action2.started -= instance.OnAction2;
             @Action2.performed -= instance.OnAction2;
             @Action2.canceled -= instance.OnAction2;
+            @Ultimate.started -= instance.OnUltimate;
+            @Ultimate.performed -= instance.OnUltimate;
+            @Ultimate.canceled -= instance.OnUltimate;
         }
 
         public void RemoveCallbacks(IPlayerControllerActions instance)
@@ -393,5 +433,6 @@ public partial class @NewPlayerController: IInputActionCollection2, IDisposable
         void OnInterract(InputAction.CallbackContext context);
         void OnAction1(InputAction.CallbackContext context);
         void OnAction2(InputAction.CallbackContext context);
+        void OnUltimate(InputAction.CallbackContext context);
     }
 }

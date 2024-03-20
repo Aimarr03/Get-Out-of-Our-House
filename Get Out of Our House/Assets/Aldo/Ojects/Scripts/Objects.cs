@@ -78,10 +78,12 @@ public class Objects : MonoBehaviour
             if(x_direction > 0  && ghostBuster.currentDirection == GhostBuster.StateDirection.Right)
             {
                 ghostBuster.Surprised();
+                Ghost.AccumulatePower();
             }
             else if (x_direction < 0 && ghostBuster.currentDirection == GhostBuster.StateDirection.Left)
             {
                 ghostBuster.Surprised();
+                Ghost.AccumulatePower();
             }
         }
     }

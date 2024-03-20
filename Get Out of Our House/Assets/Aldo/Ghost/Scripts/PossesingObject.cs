@@ -32,6 +32,7 @@ public class PossesingObject : MonoBehaviour
 
     private void Instance_InvokeInterract()
     {
+        if (ghost.IsUltimateForm) return;
         if (!Ghost.isPosessing && otherObject != null)
         {
             Debug.Log("Posessing Object");
