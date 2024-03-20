@@ -14,7 +14,6 @@ public class Objects : MonoBehaviour
     public bool canPosessed = true;
     public bool canShake = true;
     public bool canDrop = false;
-    public bool canInteract = false;
     private GameObject targetPeople;
     private SpriteRenderer interractedVisual;
 
@@ -95,18 +94,24 @@ public class Objects : MonoBehaviour
                 canDrop = false;
                 GetComponent<Rigidbody2D>().gravityScale = 10;
                 GetComponent<Objects>().canPosessed = false;
+                StartCoroutine(Fading());
                 break;
             case ObjectType.Lightable:
-                GetComponent<Rigidbody2D>().gravityScale = 10;
-                GetComponent<Objects>().canPosessed = false;
                 break;
         }
+        Ghost.isPosessing = false;
     }
 
     /*public void possess()
     {
         
     }*/
+
+    public IEnumerator Fading()
+    {
+        yield return new WaitForSeconds(3f);
+        Destroy(gameObject);
+    }
 
     public IEnumerator Shaking()
     {
@@ -136,6 +141,7 @@ public class Objects : MonoBehaviour
         }
         if(collision.tag == "Floor")
         {
+            Debug.Log("Menyentuh Floor");
             interractedVisual.sprite = TouchFloorSprite;
             Collider2D ghostBusterCollider = Physics2D.OverlapBox(transform.position, new Vector2(8,8), 0, LayerMask.NameToLayer("Ghost Buster"));
             Debug.Log("Ghost Buster detected = " + (ghostBusterCollider != null));

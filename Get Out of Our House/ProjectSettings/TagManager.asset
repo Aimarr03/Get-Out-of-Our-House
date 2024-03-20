@@ -8,6 +8,7 @@ TagManager:
   - People
   - PeopleInside
   - Knive
+  - Floor
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - Interractable Environment
   - Ghost Invisible
   - Ghost Buster
-  - 
+  - Object
   - 
   - 
   - 

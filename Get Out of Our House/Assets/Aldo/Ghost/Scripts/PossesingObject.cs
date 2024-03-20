@@ -32,6 +32,8 @@ public class PossesingObject : MonoBehaviour
 
     private void Instance_InvokeInterract()
     {
+        Debug.Log("Is Posessing? " + Ghost.isPosessing);
+        Debug.Log("Is Null? " + otherObject == null);
         if (!Ghost.isPosessing && otherObject != null)
         {
             Debug.Log("Posessing Object");
