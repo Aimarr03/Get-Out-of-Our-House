@@ -20,20 +20,21 @@ public class GhostBuster : MonoBehaviour
     private Animator ghostBusterAnimator;
     [SerializeField] private Room currentRoom;
     private Ghost ghost;
+    private ParticleSystem agitatedEffect;
     private float currentUndetectedDurationGhost;
     [SerializeField] private float maxUndetectedDurationGhost;
     public event Action<bool, Room> GhostDetected;
     private float maxTimerGhostGone;
     private void Awake()
     {
-
+        agitatedEffect = transform.GetChild(1).GetComponent<ParticleSystem>();
         moveAction = GetComponent<GhostBuster_Move_Action>();
         ghostBusterAnimator = transform.GetChild(0).GetComponent<Animator>();
         isVunerable = false;
         maxSanityArmor = 1;
         maxTimerGhostGone = 1.5f;
         sanityArmor = maxSanityArmor;
-        sanity = 1;
+        sanity = 3;
     }
     private void Start()
     {
@@ -98,6 +99,7 @@ public class GhostBuster : MonoBehaviour
     {
         Debug.Log("Ghost Buster is Surprised");
         sanityArmor--;
+        ghostBusterAnimator.SetTrigger("Low Damage");
         if(sanityArmor <= 0)
         {
             isVunerable = true;
@@ -109,12 +111,18 @@ public class GhostBuster : MonoBehaviour
         Debug.Log("Ghost is disturbed");
         if(isVunerable)
         {
+            var mainModule = agitatedEffect.main;
+            agitatedEffect.Stop();
+            mainModule.duration -= 0.24f;
+            agitatedEffect.Play();
+            ghostBusterAnimator.SetTrigger("Mid Damage");
             sanity--;
             sanityArmor = maxSanityArmor;
             isVunerable= false;
             if(sanity <= 0)
             {
-                ghostBusterAnimator.SetBool("IsDead", true);
+                agitatedEffect.Stop();
+                ghostBusterAnimator.SetBool("Dead", true);
             }
         }
         return sanity <= 0;

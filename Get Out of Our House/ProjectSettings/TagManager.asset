@@ -49,6 +49,12 @@ TagManager:
   - name: Object
     uniqueID: 1737640679
     locked: 0
+  - name: GHost
+    uniqueID: 528110441
+    locked: 0
   - name: Light
     uniqueID: 172997887
+    locked: 0
+  - name: UI
+    uniqueID: 322278607
     locked: 0

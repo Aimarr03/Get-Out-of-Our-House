@@ -14,6 +14,8 @@ public class Ghost : MonoBehaviour
     private static int UltimateMoveAccumulation;
     private static int UltimateMoveLimit;
     private Rigidbody2D rb;
+    private Animator animator;
+    public Transform GhostPowerEffect;
     public static bool canMove = true;
     public static bool isPosessingObject;
     public static bool isPosessingPerson;
@@ -26,6 +28,7 @@ public class Ghost : MonoBehaviour
     {
         IsUltimateForm = false;
         spriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
         UltimateMoveAccumulation = 0;
         UltimateMoveLimit = 1;
     }
@@ -47,15 +50,20 @@ public class Ghost : MonoBehaviour
     private IEnumerator UltimateActive()
     {
         spriteRenderer.color = Color.red;
+        
         IsUltimateForm = true;
         yield return new WaitForSeconds(3.3f);
         IsUltimateForm = false;
         spriteRenderer.color = Color.white;
+        UltimateMoveAccumulation = 0;
+        animator.SetBool("PowerUp", false);
+        GhostPowerEffect.gameObject.SetActive(false);
     }
     public void UseUltimateEffect()
     {
         IsUltimateForm = false;
         spriteRenderer.color = Color.white;
+        GhostPowerEffect.gameObject.SetActive(false);
     }
 
     private void Instance_endDialogue()
@@ -89,6 +97,7 @@ public class Ghost : MonoBehaviour
     {
         if (UltimateMoveAccumulation >= UltimateMoveLimit)
         {
+            animator.SetBool("PowerUp", true);
             if (IsUltimateForm) Debug.Log("ULTIMATEEEE");
             else Debug.Log("Ultimate Ready");
         }
@@ -150,6 +159,8 @@ public class Ghost : MonoBehaviour
     {
         isPosessing = input;
         isPosessingObject = input;
+        GhostPowerEffect.gameObject.SetActive(!input);
+        if(UltimateMoveAccumulation < UltimateMoveLimit) GhostPowerEffect.gameObject.SetActive(false);
         GetComponent<SpriteRenderer>().enabled = !input;
         canMove = !input;
         Debug.Log($"visible layer {LayerMask.NameToLayer("Ghost")}");
