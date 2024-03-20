@@ -10,6 +10,7 @@ public class PlayerControllerManager : MonoBehaviour
     public event Action InvokeInterract;
     public event Action InvokeAction1;
     public event Action InvokeAction2;
+    public event Action InvokeUltimate;
     private NewPlayerController newPlayerController;
     private void Awake()
     {
@@ -26,6 +27,13 @@ public class PlayerControllerManager : MonoBehaviour
         newPlayerController.PlayerController.Interract.performed += Interract_performed;
         newPlayerController.PlayerController.Action1.performed += Action1_performed;
         newPlayerController.PlayerController.Action2.performed += Action2_performed;
+        newPlayerController.PlayerController.Ultimate.performed += Ultimate_performed;
+    }
+
+    private void Ultimate_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        Debug.Log("Ultimate Interract Manager");
+        InvokeUltimate?.Invoke();
     }
 
     private void Action1_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)

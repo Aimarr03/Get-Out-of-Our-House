@@ -30,10 +30,10 @@ public class GhostBuster : MonoBehaviour
         moveAction = GetComponent<GhostBuster_Move_Action>();
         ghostBusterAnimator = transform.GetChild(0).GetComponent<Animator>();
         isVunerable = false;
-        maxSanityArmor = 2;
+        maxSanityArmor = 1;
         maxTimerGhostGone = 1.5f;
         sanityArmor = maxSanityArmor;
-        sanity = 2;
+        sanity = 1;
     }
     private void Start()
     {
@@ -111,7 +111,7 @@ public class GhostBuster : MonoBehaviour
             isVunerable= false;
             if(sanity <= 0)
             {
-                Debug.Log("Win");
+                ghostBusterAnimator.SetBool("IsDead", true);
             }
         }
         return sanity <= 0;

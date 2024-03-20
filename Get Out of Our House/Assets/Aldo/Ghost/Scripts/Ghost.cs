@@ -6,8 +6,13 @@ using UnityEngine.UIElements;
 
 public class Ghost : MonoBehaviour
 {
+    public LayerMask ghostBusterLayerMask;
+    public bool IsUltimateForm;
     public static event Action<Ghost> PosessingSomething;
+    private SpriteRenderer spriteRenderer;
     public static float speed = 6;
+    private static int UltimateMoveAccumulation;
+    private static int UltimateMoveLimit;
     private Rigidbody2D rb;
     public static bool canMove = true;
     public static bool isPosessingObject;
@@ -17,14 +22,40 @@ public class Ghost : MonoBehaviour
     [SerializeField] private Room currentRoom;
     [SerializeField] private LayerMask visible;
     [SerializeField] private LayerMask invisible;
-    // Start is called before the first frame update
+    private void Awake()
+    {
+        IsUltimateForm = false;
+        spriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        UltimateMoveAccumulation = 0;
+        UltimateMoveLimit = 1;
+    }
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         //currentRoom.PlayParticleSystem(true);
         PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
+        PlayerControllerManager.instance.InvokeUltimate += Instance_InvokeUltimate;
         //DialogueManager.instance.beginDialogue += Instance_beginDialogue;
         //DialogueManager.instance.endDialogue += Instance_endDialogue;
+    }
+
+    private void Instance_InvokeUltimate()
+    {
+        if (UltimateMoveAccumulation < UltimateMoveLimit) return;
+        StartCoroutine(UltimateActive());
+    }
+    private IEnumerator UltimateActive()
+    {
+        spriteRenderer.color = Color.red;
+        IsUltimateForm = true;
+        yield return new WaitForSeconds(3.3f);
+        IsUltimateForm = false;
+        spriteRenderer.color = Color.white;
+    }
+    public void UseUltimateEffect()
+    {
+        IsUltimateForm = false;
+        spriteRenderer.color = Color.white;
     }
 
     private void Instance_endDialogue()
@@ -41,6 +72,7 @@ public class Ghost : MonoBehaviour
 
     private void Instance_InvokeInterract()
     {
+        if (IsUltimateForm) return;
         Debug.Log("Invoke Interract");
         Collider2D[] collider = Physics2D.OverlapBoxAll(transform.position, boxSize, 0);
         foreach (Collider2D collider2d in collider)
@@ -55,6 +87,11 @@ public class Ghost : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (UltimateMoveAccumulation >= UltimateMoveLimit)
+        {
+            if (IsUltimateForm) Debug.Log("ULTIMATEEEE");
+            else Debug.Log("Ultimate Ready");
+        }
         /*Debug.Log("Person " + isPosessingPerson);
         Debug.Log("Object " + isPosessingObject);
         Debug.Log("Can Moving " + canMove);*/
@@ -82,7 +119,8 @@ public class Ghost : MonoBehaviour
         //Debug.Log(inputMovement);
         //float movingX = Input.GetAxis("Horizontal");
         //float movingY = Input.GetAxis("Vertical");
-        rb.velocity = new Vector2(inputMovement.x * speed , inputMovement.y * speed );
+        float theSpeed = IsUltimateForm ? speed * 2 : speed;
+        rb.velocity = new Vector2(inputMovement.x * theSpeed, inputMovement.y * theSpeed);
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             speed = 12;
@@ -118,5 +156,9 @@ public class Ghost : MonoBehaviour
         Debug.Log($"invisible layer {LayerMask.NameToLayer("Ghost Invisible")}");
         gameObject.layer = input ? LayerMask.NameToLayer("Ghost Invisible") : LayerMask.NameToLayer("Ghost");
         PosessingSomething?.Invoke(this);
+    }
+    public static void AccumulatePower()
+    {
+        UltimateMoveAccumulation = Math.Clamp(UltimateMoveAccumulation + 1, 0,UltimateMoveLimit);
     }
 }

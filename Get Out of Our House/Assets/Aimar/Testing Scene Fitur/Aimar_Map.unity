@@ -19117,6 +19117,10 @@ PrefabInstance:
       propertyPath: invisible.m_Bits
       value: 512
       objectReference: {fileID: 0}
+    - target: {fileID: 3992184758660706014, guid: 85cff0b41bc3c64499cfb05f02806f60, type: 3}
+      propertyPath: ghostBusterLayerMask.m_Bits
+      value: 1024
+      objectReference: {fileID: 0}
     - target: {fileID: 4952919089980754780, guid: 85cff0b41bc3c64499cfb05f02806f60, type: 3}
       propertyPath: m_LocalPosition.x
       value: -4.8

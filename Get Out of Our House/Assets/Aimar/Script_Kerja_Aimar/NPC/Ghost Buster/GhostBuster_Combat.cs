@@ -119,6 +119,7 @@ public class GhostBuster_Combat : MonoBehaviour
     }
     private void PullAttack(Rigidbody2D ghostRigidbody)
     {
+        if (ghostRigidbody.GetComponent<Ghost>().IsUltimateForm) return;
         Vector2 direction = (transform.position - ghostRigidbody.transform.position).normalized;
         ghostRigidbody.AddForce(direction * pullForce);
         Debug.Log("Pulling Ghost");
