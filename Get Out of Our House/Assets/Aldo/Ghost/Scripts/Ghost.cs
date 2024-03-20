@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,7 @@ using UnityEngine.UIElements;
 
 public class Ghost : MonoBehaviour
 {
+    public static event Action<Ghost> PosessingSomething;
     public static float speed = 6;
     private Rigidbody2D rb;
     public static bool canMove = true;
@@ -13,6 +15,8 @@ public class Ghost : MonoBehaviour
     public static bool isPosessing;
     [SerializeField] private Vector2 boxSize;
     [SerializeField] private Room currentRoom;
+    [SerializeField] private LayerMask visible;
+    [SerializeField] private LayerMask invisible;
     // Start is called before the first frame update
     void Start()
     {
@@ -51,24 +55,22 @@ public class Ghost : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Person " + isPosessingPerson);
+        /*Debug.Log("Person " + isPosessingPerson);
         Debug.Log("Object " + isPosessingObject);
-        Debug.Log("Can Moving " + canMove);
-        if (!canMove) Debug.Log("Pernah False");
+        Debug.Log("Can Moving " + canMove);*/
+        if (!canMove) //Debug.Log("Pernah False");
         if (isPosessingObject || isPosessingPerson)
         {
-            isPosessing = true;
-            canMove = false;
             GetComponent<SpriteRenderer>().enabled = false;
-            gameObject.layer = 8; 
-            Debug.Log("Masuk Posessing Cuy!");
+            canMove = false;
+            //gameObject.layer = 8; 
+            //Debug.Log("Masuk Posessing Cuy!");
         }
         else
         {
             GetComponent<SpriteRenderer>().enabled = true;
-            isPosessing = false;
-            gameObject.layer = 6; 
             canMove = true;
+            //gameObject.layer = 6; 
         }
         if (!canMove) return;
         moving();
@@ -105,5 +107,16 @@ public class Ghost : MonoBehaviour
     public Room GetCurrentRoom()
     {
         return currentRoom;
+    }
+    public void SetInvisibility(bool input)
+    {
+        isPosessing = input;
+        isPosessingObject = input;
+        GetComponent<SpriteRenderer>().enabled = !input;
+        canMove = !input;
+        Debug.Log($"visible layer {LayerMask.NameToLayer("Ghost")}");
+        Debug.Log($"invisible layer {LayerMask.NameToLayer("Ghost Invisible")}");
+        gameObject.layer = input ? LayerMask.NameToLayer("Ghost Invisible") : LayerMask.NameToLayer("Ghost");
+        PosessingSomething?.Invoke(this);
     }
 }

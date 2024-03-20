@@ -6,8 +6,13 @@ using UnityEngine;
 public class PossesingObject : MonoBehaviour
 {
     private GameObject otherObject;
+    private Ghost ghost;
 
     // Start is called before the first frame update
+    private void Awake()
+    {
+        ghost = GetComponent<Ghost>();
+    }
     void Start()
     {
         PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
@@ -30,7 +35,7 @@ public class PossesingObject : MonoBehaviour
         if (!Ghost.isPosessing && otherObject != null)
         {
             Debug.Log("Posessing Object");
-            Ghost.isPosessingObject = true;
+            ghost.SetInvisibility(true);
             otherObject.GetComponent<Objects>().isPosessed = true;
             return;
         }
@@ -38,7 +43,7 @@ public class PossesingObject : MonoBehaviour
         if (Ghost.isPosessingObject)
         {
             Debug.Log("Keluar dari Object");
-            Ghost.isPosessingObject = false;
+            ghost.SetInvisibility(false);
             otherObject.GetComponent<Objects>().isPosessed = false;
         }
     }
@@ -70,7 +75,7 @@ public class PossesingObject : MonoBehaviour
         if (otherObject == null && collision.tag == "object" && collision.GetComponent<Objects>().canPosessed)
         {
             otherObject = collision.gameObject;
-            otherObject.GetComponent<SpriteRenderer>().color = Color.black;
+            //otherObject.GetComponent<SpriteRenderer>().color = Color.black;
             //Debug.Log("Siap Merasuki " + gameObject);
         }
     }
@@ -79,7 +84,7 @@ public class PossesingObject : MonoBehaviour
     {
         if (otherObject != null && collision.tag == "object")
         {
-            otherObject.GetComponent<SpriteRenderer>().color = Color.white;
+            //otherObject.GetComponent<SpriteRenderer>().color = Color.white;
             otherObject = null;
             if (!Ghost.isPosessingPerson)
             {

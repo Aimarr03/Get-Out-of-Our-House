@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Windows;
 
 public class GhostBuster : MonoBehaviour
 {
@@ -16,15 +17,44 @@ public class GhostBuster : MonoBehaviour
     private float currentUndetectedDurationGhost;
     [SerializeField] private float maxUndetectedDurationGhost;
     public event Action<bool, Room> GhostDetected;
+    private float maxTimerGhostGone;
     private void Awake()
     {
         moveAction = GetComponent<GhostBuster_Move_Action>();
         ghostBusterAnimator = transform.GetChild(0).GetComponent<Animator>();
         isVunerable = false;
         maxSanityArmor = 2;
+        maxTimerGhostGone = 1.5f;
         sanityArmor = maxSanityArmor;
         sanity = 2;
     }
+    private void Start()
+    {
+        Ghost.PosessingSomething += Ghost_PosessingSomething;
+    }
+
+    private void Ghost_PosessingSomething(Ghost input)
+    {
+        StopCoroutine(GhostDetectionLogicTimer(input));
+        StartCoroutine(GhostDetectionLogicTimer(input));
+    }
+    private IEnumerator GhostDetectionLogicTimer(Ghost input)
+    {
+        if (Ghost.isPosessing && ghost != null && input.GetCurrentRoom() == GetCurrentRoom())
+        {
+            ghost = null;
+            yield return new WaitForSeconds(maxTimerGhostGone);
+        }
+        else
+        {
+            if (input.GetCurrentRoom() == GetCurrentRoom())
+            {
+                ghost = input;
+            }
+        }
+        GhostDetected?.Invoke(ghost != null, null);
+    }
+
     private void Update()
     {
         

@@ -20,7 +20,6 @@ public class GhostBuster_Move_Action : MonoBehaviour
         ghostBuster.GhostDetected += GhostBuster_GhostDetected;
         SetTargetNextRoom();
     }
-
     private void GhostBuster_GhostDetected(bool detected, Room currentRecordRoomGhost)
     {
         if (detected)
@@ -36,6 +35,7 @@ public class GhostBuster_Move_Action : MonoBehaviour
             else StartIdlingTheRoom();
         }
     }
+    
 
     private void Update()
     {
@@ -44,8 +44,8 @@ public class GhostBuster_Move_Action : MonoBehaviour
     }
     private IEnumerator MoveActionCoroutine()
     {
-        Debug.Log(Vector3.Distance(targetLocation, transform.position));
-        Debug.Log(Vector3.Distance(targetLocation, transform.position) > 0.15f);
+        //Debug.Log(Vector3.Distance(targetLocation, transform.position));
+        //Debug.Log(Vector3.Distance(targetLocation, transform.position) > 0.15f);
         while (Vector3.Distance(targetLocation, transform.position) > 0.15f)
         {
             ghostBuster.GetAnimator().SetFloat("IsMoving", 1);

@@ -38,9 +38,9 @@ public class GhostBuster_Combat : MonoBehaviour
         ghostBuster.GhostDetected += GhostBuster_GhostDetected;
     }
 
+
     private void GhostBuster_GhostDetected(bool detected, Room room)
     {
-        Debug.Log(detected);
         if (detected)
         {
             currentState = CombatState.Aggro;
@@ -71,7 +71,8 @@ public class GhostBuster_Combat : MonoBehaviour
     }
     private void AggroState()
     {
-        Ghost ghost = ghostBuster.IsGhostDetected();
+        //Ghost ghost = ghostBuster.IsGhostDetected();
+
         GhostBuster_Move_Action moveAction = ghostBuster.GetMoveAction();
         
         Vector3 offsetPosition = new Vector3(transform.position.x, transform.position.y + aggroSize.y / 2, transform.position.z);
@@ -89,10 +90,13 @@ public class GhostBuster_Combat : MonoBehaviour
         }
         else
         {
+            Ghost ghost = ghostBuster.IsGhostDetected();
+            if (ghost == null) return;
             Vector3 ghostPosition = ghost.transform.position;
             ghostPosition = new Vector3(ghostPosition.x, transform.position.y, ghostPosition.z);
             ghostBuster.FlippingSprite(ghostPosition);
             ghostBuster.GetAnimator().SetFloat("IsMoving", 1);
+            Debug.Log("Ghost Approaching");
             transform.position = Vector2.MoveTowards(transform.position, ghostPosition, moveAction.GetMovementSpeed() * Time.deltaTime);
             currentState = CombatState.Aggro;
         }
@@ -108,6 +112,7 @@ public class GhostBuster_Combat : MonoBehaviour
         if (currentState == CombatState.Aggro) return;
         Vector3 offsetPosition = new Vector3(transform.position.x, transform.position.y + aggroSize.y / 2, transform.position.z);
         Collider2D ghostCollided = Physics2D.OverlapBox(offsetPosition, aggroSize, 0, ghostLayerMask);
+        if (ghostCollided == null) return;
         Rigidbody2D rigidBody = ghostCollided.GetComponent<Rigidbody2D>();
         ghostBuster.FlippingSprite(ghostCollided.transform.position);
         PullAttack(rigidBody);
