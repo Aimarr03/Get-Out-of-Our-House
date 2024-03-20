@@ -6,6 +6,12 @@ using UnityEngine.Windows;
 
 public class GhostBuster : MonoBehaviour
 {
+    public enum StateDirection
+    {
+        Left,
+        Right
+    }
+    public StateDirection currentDirection = StateDirection.Left;
     private int sanity;
     private bool isVunerable;
     private int sanityArmor;
@@ -20,6 +26,7 @@ public class GhostBuster : MonoBehaviour
     private float maxTimerGhostGone;
     private void Awake()
     {
+
         moveAction = GetComponent<GhostBuster_Move_Action>();
         ghostBusterAnimator = transform.GetChild(0).GetComponent<Animator>();
         isVunerable = false;
@@ -86,6 +93,7 @@ public class GhostBuster : MonoBehaviour
     }
     public bool Surprised()
     {
+        Debug.Log("Ghost Buster is Surprised");
         sanityArmor--;
         if(sanityArmor <= 0)
         {
@@ -95,6 +103,7 @@ public class GhostBuster : MonoBehaviour
     }
     public bool Fear()
     {
+        Debug.Log("Ghost is disturbed");
         if(isVunerable)
         {
             sanity--;
@@ -106,6 +115,10 @@ public class GhostBuster : MonoBehaviour
             }
         }
         return sanity <= 0;
+    }
+    public bool CheckVunerability()
+    {
+        return isVunerable;
     }
     public void RemoveGhostDetection(Ghost ghost)
     {
@@ -129,6 +142,7 @@ public class GhostBuster : MonoBehaviour
         if (direction.x != 0)
         {
             float rotation_y = direction.x > 0 ? 0 : 180;
+            currentDirection = rotation_y == 0 ? StateDirection.Left : StateDirection.Right;
             transform.rotation = Quaternion.Euler(new Vector3(0, rotation_y, 0));
         }
     }

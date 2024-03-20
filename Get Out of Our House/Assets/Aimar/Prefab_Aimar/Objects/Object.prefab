@@ -129,7 +129,7 @@ BoxCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1024
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -176,4 +176,8 @@ MonoBehaviour:
   canShake: 1
   canDrop: 1
   canInteract: 1
+  radiusCollision: 8
+  TouchFloorSprite: {fileID: 0}
+  objectType: 0
   lightSource: {fileID: 0}
+  currentInterract: 1
