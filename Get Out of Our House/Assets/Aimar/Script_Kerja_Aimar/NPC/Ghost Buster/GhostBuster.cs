@@ -10,6 +10,7 @@ public class GhostBuster : MonoBehaviour
     private int sanityArmor;
     private int maxSanityArmor;
     private GhostBuster_Move_Action moveAction;
+    private Animator ghostBusterAnimator;
     [SerializeField] private Room currentRoom;
     private Ghost ghost;
     private float currentUndetectedDurationGhost;
@@ -18,6 +19,7 @@ public class GhostBuster : MonoBehaviour
     private void Awake()
     {
         moveAction = GetComponent<GhostBuster_Move_Action>();
+        ghostBusterAnimator = transform.GetChild(0).GetComponent<Animator>();
         isVunerable = false;
         maxSanityArmor = 2;
         sanityArmor = maxSanityArmor;
@@ -86,5 +88,18 @@ public class GhostBuster : MonoBehaviour
     {
         Debug.Log(room);
         return currentRoom.GetDoorToRoom(room);
+    }
+    public Animator GetAnimator()
+    {
+        return ghostBusterAnimator;
+    }
+    public void FlippingSprite(Vector3 comparison)
+    {
+        Vector3 direction = transform.position - comparison;
+        if (direction.x != 0)
+        {
+            float rotation_y = direction.x > 0 ? 0 : 180;
+            transform.rotation = Quaternion.Euler(new Vector3(0, rotation_y, 0));
+        }
     }
 }

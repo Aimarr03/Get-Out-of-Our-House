@@ -90,6 +90,7 @@ public class GhostBuster_Combat : MonoBehaviour
         {
             Vector3 ghostPosition = ghost.transform.position;
             ghostPosition = new Vector3(ghostPosition.x, transform.position.y, ghostPosition.z);
+            ghostBuster.FlippingSprite(ghostPosition);
             transform.position = Vector2.MoveTowards(transform.position, ghostPosition, moveAction.GetMovementSpeed() * Time.deltaTime);
             currentState = CombatState.Aggro;
         }
@@ -106,11 +107,16 @@ public class GhostBuster_Combat : MonoBehaviour
         Vector3 offsetPosition = new Vector3(transform.position.x, transform.position.y + aggroSize.y / 2, transform.position.z);
         Collider2D ghostCollided = Physics2D.OverlapBox(offsetPosition, aggroSize, 0, ghostLayerMask);
         Rigidbody2D rigidBody = ghostCollided.GetComponent<Rigidbody2D>();
-        Vector2 direction =(transform.position - ghostCollided.transform.position).normalized;
-        rigidBody.AddForce(direction * pullForce);
+        ghostBuster.FlippingSprite(ghostCollided.transform.position);
+        PullAttack(rigidBody);
+    }
+    private void PullAttack(Rigidbody2D ghostRigidbody)
+    {
+        Vector2 direction = (transform.position - ghostRigidbody.transform.position).normalized;
+        ghostRigidbody.AddForce(direction * pullForce);
         Debug.Log("Pulling Ghost");
         currentAttackInterval += Time.deltaTime;
-        if(currentAttackInterval >= attackInterval)
+        if (currentAttackInterval >= attackInterval)
         {
             currentAttackInterval = 0;
             Debug.Log("Ghost Take Damage " + damage);

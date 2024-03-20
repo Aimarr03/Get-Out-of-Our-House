@@ -48,10 +48,15 @@ public class GhostBuster_Move_Action : MonoBehaviour
         Debug.Log(Vector3.Distance(targetLocation, transform.position) > 0.15f);
         while (Vector3.Distance(targetLocation, transform.position) > 0.15f)
         {
+            ghostBuster.GetAnimator().SetFloat("IsMoving", 1);
             MovingTowards();
             yield return null;  
         }
-        if(currentBounds <= 0)DetectionBox();
+        if (currentBounds <= 0)
+        {
+            ghostBuster.GetAnimator().SetFloat("IsMoving", -1);
+            DetectionBox();
+        }
     }
     private IEnumerator SetTargetLocation(float min, float max)
     {
@@ -59,7 +64,9 @@ public class GhostBuster_Move_Action : MonoBehaviour
         Vector3 newPosition = new Vector3(result, transform.position.y, 0);
         targetLocation = newPosition;
         yield return MoveActionCoroutine();
+        ghostBuster.GetAnimator().StartPlayback();
         yield return new WaitForSeconds(Random.Range(0.8f, 1.2f));
+        ghostBuster.GetAnimator().StopPlayback();
         currentBounds--;
         Debug.Log($"Current Bounds {currentBounds}");
         if (currentBounds > 0)
@@ -83,7 +90,9 @@ public class GhostBuster_Move_Action : MonoBehaviour
         this.targetLocation = targetLocation;
         //StopCoroutine(MoveActionCoroutine());
         yield return MoveActionCoroutine();
+        ghostBuster.GetAnimator().StartPlayback();
         yield return new WaitForSeconds(Random.Range(0.8f, 1.3f));
+        ghostBuster.GetAnimator().StopPlayback();
         Debug.Log("Starting Idling");
         StartIdlingTheRoom();
     }
@@ -97,6 +106,7 @@ public class GhostBuster_Move_Action : MonoBehaviour
     {
         //Debug.Log("Moving Towards");
         Vector3 currentPosition = transform.position;
+        ghostBuster.FlippingSprite(targetLocation);
         transform.position = Vector3.MoveTowards(currentPosition, targetLocation, movementSpeed * Time.deltaTime);
     }
     private void SetTargetNextRoom()
