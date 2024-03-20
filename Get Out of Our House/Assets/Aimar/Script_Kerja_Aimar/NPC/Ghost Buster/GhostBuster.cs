@@ -50,6 +50,7 @@ public class GhostBuster : MonoBehaviour
         if (Ghost.isPosessing && ghost != null && input.GetCurrentRoom() == GetCurrentRoom())
         {
             ghost = null;
+            SetTrigger("Confused");
             yield return new WaitForSeconds(maxTimerGhostGone);
         }
         else
@@ -57,6 +58,7 @@ public class GhostBuster : MonoBehaviour
             if (input.GetCurrentRoom() == GetCurrentRoom())
             {
                 ghost = input;
+                SetTrigger("Surprised");
             }
         }
         GhostDetected?.Invoke(ghost != null, null);
@@ -88,6 +90,7 @@ public class GhostBuster : MonoBehaviour
         Room currentGhostRoom = null;
         if (this.ghost != null) currentGhostRoom = this.ghost.GetCurrentRoom();
         Debug.Log(currentGhostRoom);
+        //ghostBusterAnimator.SetTrigger("Surprised");
         this.ghost = ghost;
         GhostDetected?.Invoke(this.ghost != null, currentGhostRoom);
     }
@@ -145,5 +148,9 @@ public class GhostBuster : MonoBehaviour
             currentDirection = rotation_y == 0 ? StateDirection.Left : StateDirection.Right;
             transform.rotation = Quaternion.Euler(new Vector3(0, rotation_y, 0));
         }
+    }
+    public void SetTrigger(string trigger)
+    {
+        ghostBusterAnimator.SetTrigger(trigger);
     }
 }

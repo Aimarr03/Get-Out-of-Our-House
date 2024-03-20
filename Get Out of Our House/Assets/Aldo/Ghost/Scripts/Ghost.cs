@@ -161,4 +161,5 @@ public class Ghost : MonoBehaviour
     {
         UltimateMoveAccumulation = Math.Clamp(UltimateMoveAccumulation + 1, 0,UltimateMoveLimit);
     }
+    
 }

@@ -68,7 +68,10 @@ public class Room : MonoBehaviour
             {
                 if(currentGameObject.TryGetComponent<Ghost>(out Ghost ghostCurrent))
                 {
-                    if (Ghost.isPosessing) return;
+                    if (Ghost.isPosessing) 
+                    {
+                        return;
+                    } 
                     ghostBuster.SetGhostDetected(ghostCurrent);
                 }
             }
