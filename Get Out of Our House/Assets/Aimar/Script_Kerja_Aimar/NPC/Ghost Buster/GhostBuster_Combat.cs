@@ -85,12 +85,14 @@ public class GhostBuster_Combat : MonoBehaviour
             }
             Debug.Log("Ghost Detected");
             currentState = CombatState.Attack;
+            ghostBuster.GetAnimator().SetFloat("IsMoving", -1);
         }
         else
         {
             Vector3 ghostPosition = ghost.transform.position;
             ghostPosition = new Vector3(ghostPosition.x, transform.position.y, ghostPosition.z);
             ghostBuster.FlippingSprite(ghostPosition);
+            ghostBuster.GetAnimator().SetFloat("IsMoving", 1);
             transform.position = Vector2.MoveTowards(transform.position, ghostPosition, moveAction.GetMovementSpeed() * Time.deltaTime);
             currentState = CombatState.Aggro;
         }

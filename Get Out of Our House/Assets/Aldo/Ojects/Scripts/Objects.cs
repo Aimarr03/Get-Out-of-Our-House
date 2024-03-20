@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,10 +12,15 @@ public class Objects : MonoBehaviour
     public bool canInteract = false;
     private GameObject targetPeople;
     private int a;
+    private SpriteRenderer interractedVisual;
+    [SerializeField] private Transform lightSource;
+    private bool currentInterract;
     // Start is called before the first frame update
     void Start()
     {
-        
+        interractedVisual = GetComponent<SpriteRenderer>();
+        currentInterract = true;
+        InterractEffect(currentInterract);
     }
 
     // Update is called once per frame
@@ -47,17 +53,19 @@ public class Objects : MonoBehaviour
     public IEnumerator Shaking()
     {
         // Yang dilakukan ketika Action 1 (animasi)
-        GetComponent<SpriteRenderer>().color = Color.red;
+        currentInterract = !currentInterract;
+        InterractEffect(currentInterract);
+        //GetComponent<SpriteRenderer>().color = Color.red;
         yield return new WaitForSeconds(0.5f);
-        GetComponent<SpriteRenderer>().color = Color.white;
+        //GetComponent<SpriteRenderer>().color = Color.white;
         yield return new WaitForSeconds(0.5f);
         if (targetPeople != null)
         {
             targetPeople.GetComponent<FearMeter>().fearMeter += 5;
         }
-        GetComponent<SpriteRenderer>().color = Color.red;
+        //GetComponent<SpriteRenderer>().color = Color.red;
         yield return new WaitForSeconds(0.5f);
-        GetComponent<SpriteRenderer>().color = Color.white;
+        //GetComponent<SpriteRenderer>().color = Color.white;
         canShake = true;
         canPosessed = true;
     }
@@ -76,5 +84,14 @@ public class Objects : MonoBehaviour
         {
             targetPeople = null;
         }
+    }
+    private void InterractEffect(bool input)
+    {
+        interractedVisual.enabled = input;
+        if (lightSource != null)
+        {
+            lightSource.gameObject.SetActive(input);
+        }
+        
     }
 }
