@@ -87,7 +87,7 @@ public class GhostBuster_Move_Action : MonoBehaviour
     {
         Debug.Log("Set Target Location " + targetLocation);
         targetLocation.y = transform.position.y;
-        this.targetLocation = targetLocation;
+        this.targetLocation = targetLocation; 
         //StopCoroutine(MoveActionCoroutine());
         yield return MoveActionCoroutine();
         ghostBuster.GetAnimator().StartPlayback();
