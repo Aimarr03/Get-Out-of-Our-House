@@ -24,6 +24,7 @@ public class NPC_Move_Action : MonoBehaviour
     
     private NPC npc;
     public MoveAction moveAction;
+    public int duration;
     private void Awake()
     {
         isMovingByEvent = false;
@@ -51,7 +52,6 @@ public class NPC_Move_Action : MonoBehaviour
         yield return StartCoroutine(SetTargetLocation(targetPosition));
         Debug.Log("Start Idling");
         StartIdlingTheRoom();
-        isMovingByEvent = false;
     }
     private IEnumerator MoveAction()
     {
@@ -158,5 +158,11 @@ public class NPC_Move_Action : MonoBehaviour
     {
         moveAction = null;
         StartIdlingTheRoom();
+    }
+    public void SetFreeRoaming()
+    {
+        isMovingByEvent = true;
+        Debug.Log(npc + " is Set Free Roaming");
+        Npc_panicAttack();
     }
 }

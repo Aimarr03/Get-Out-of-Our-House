@@ -16,11 +16,15 @@ public class EventManager : MonoBehaviour
 
     void Start()
     {
-        Queue<EventAction> moveActions = new Queue<EventAction>(DataEvents.instance._ListOfMoveAction);
+        Queue<EventAction> childmoveActions = new Queue<EventAction>(DataEvents.instance._ListOfChildMoveAction);
+        Queue<EventAction> dadmoveActions = new Queue<EventAction>(DataEvents.instance._ListOfDadMoveAction);
+        Queue<EventAction> mommoveActions = new Queue<EventAction>(DataEvents.instance._ListOfMomMoveAction);
         Queue<EventAction> dialogueActions = new Queue<EventAction>(DataEvents.instance._ListOfDialogueAction);
         Queue<EventAction> callActions = new Queue<EventAction> (DataEvents.instance._ListOfCallAction);
-        eventActions = CombinesQueue(moveActions, dialogueActions);
+        eventActions = CombinesQueue(childmoveActions, dialogueActions);
         eventActions = CombinesQueue(eventActions, callActions);
+        eventActions = CombinesQueue(eventActions, dadmoveActions);
+        eventActions = CombinesQueue(eventActions, mommoveActions);
         eventActions = new Queue<EventAction>(eventActions.OrderBy(ac => ac.timerEvent));
         currentEventAction = eventActions.Dequeue();
         TimeManager.instance.OneSecondIntervalEventAction += Instance_OneSecondIntervalEventAction;

@@ -16,6 +16,7 @@ public class NPC : MonoBehaviour
     [SerializeField] private Room currentRoom;
     [SerializeField] private Animator animator;
     [SerializeField] private DialogueAction dialogueAction;
+    [SerializeField] private InterractingAction interractionAction;
     private NPC_Move_Action moveAction;
     public int fearMeter;
     public bool IsBusy;
@@ -44,6 +45,17 @@ public class NPC : MonoBehaviour
     private void Instance_OneSecondIntervalEventAction(int currentimer)
     {
         if(dialogueAction != null) DialogueCheckCondition();
+        if (interractionAction != null) CheckInterraction();
+    }
+    private void CheckInterraction()
+    {
+        interractionAction.duration--;
+        if(interractionAction.duration <= 0)
+        {
+            Debug.Log(gameObject + "interraction finish");
+            interractionAction = null;
+            IsBusy = false;
+        }
     }
     private void DialogueCheckCondition()
     {
@@ -73,6 +85,9 @@ public class NPC : MonoBehaviour
             transform.rotation = Quaternion.Euler(new Vector3(0, rotation_y, 0));
         }
     }
+    public void SetInterractionAction(InterractingAction interractAction) => interractionAction = interractAction;
+    public InterractingAction GetInterractingAction() => interractionAction;
+
     public void SetRoom(Room room) => currentRoom = room;
     public Room GetRoom() => currentRoom;
     public Animator GetAnimator() => animator;
@@ -122,5 +137,9 @@ public class NPC : MonoBehaviour
     public void HasFear()
     {
         EventManager.Instance.SetCurrentActionConditions(fearMeter > 0);
+    }
+    public void CheckNotFear()
+    {
+        EventManager.Instance.SetCurrentActionConditions(fearMeter == 0);
     }
 }

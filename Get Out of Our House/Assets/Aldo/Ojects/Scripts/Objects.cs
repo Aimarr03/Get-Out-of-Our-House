@@ -157,7 +157,7 @@ public class Objects : MonoBehaviour, I_InterractableVisual
         if(collision.tag == "Floor")
         {
             Debug.Log("Menyentuh Floor");
-            if (room == null) ;
+            if (room == null) return;
             interractedVisual.sprite = TouchFloorSprite;
             List<GameObject> ListOfPeople = room.GetPeople();
             foreach(GameObject person in ListOfPeople)
