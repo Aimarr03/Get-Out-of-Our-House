@@ -40,6 +40,22 @@ public class Room : MonoBehaviour
         maxHorizontal -= 1.5f;
         //Debug.Log($"min: {minHorizontal} max: {maxHorizontal}");
     }
+    public void GetGroundHorizontalBoundForPlayer(out float minHorizontal, out float maxHorizontal)
+    {
+        Bounds bounds = floor.bounds;
+        minHorizontal = bounds.min.x;
+        maxHorizontal = bounds.max.x;
+        minHorizontal += 1.4f;
+        maxHorizontal -= 1.4f;
+        //Debug.Log($"min: {minHorizontal} max: {maxHorizontal}");
+    }
+    public void GetGroundHorizontalBoundForCamera(out float minHorizontal, out float maxHorizontal)
+    {
+        Bounds bounds = floor.bounds;
+        minHorizontal = bounds.min.x;
+        maxHorizontal = bounds.max.x;
+        //Debug.Log($"min: {minHorizontal} max: {maxHorizontal}");
+    }
     public float GetFloorVerticalBound()
     {
         Bounds bounds = floor.bounds;

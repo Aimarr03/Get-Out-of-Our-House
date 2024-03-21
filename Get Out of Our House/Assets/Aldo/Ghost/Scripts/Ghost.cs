@@ -195,27 +195,27 @@ public class Ghost : MonoBehaviour
         }
     }
 
-void moving()
+    void moving()
     {
         Vector2 inputMovement = PlayerControllerManager.instance.GetVector2Input();
-        //Debug.Log(inputMovement);
-        //float movingX = Input.GetAxis("Horizontal");
-        //float movingY = Input.GetAxis("Vertical");
         float theSpeed = IsUltimateForm ? speed * 2 : speed;
-        rb.velocity = new Vector2(inputMovement.x * theSpeed, inputMovement.y * theSpeed);
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        currentRoom.GetGroundHorizontalBoundForPlayer(out float min, out float max);
+        float xPosition = transform.position.x;
+        if (xPosition >= min && xPosition <= max)
         {
-            speed = 12;
+            rb.velocity = new Vector2(inputMovement.x * theSpeed, inputMovement.y * theSpeed);
         }
-        if (Input.GetKeyUp(KeyCode.LeftShift))
+        else
         {
-            speed = 6;
+            rb.velocity = Vector2.zero;
+            float clampedX = Mathf.Clamp(xPosition, min, max);
+            transform.position = new Vector3(clampedX, transform.position.y, transform.position.z);
         }
         if (inputMovement.x < 0)
         {
             transform.localScale = new Vector2(1, 1);
         }
-        if (inputMovement.x > 0)
+        else if (inputMovement.x > 0)
         {
             transform.localScale = new Vector2(-1, 1);
         }

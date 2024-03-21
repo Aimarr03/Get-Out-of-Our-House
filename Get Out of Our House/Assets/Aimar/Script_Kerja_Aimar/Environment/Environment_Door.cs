@@ -46,7 +46,7 @@ public class Environment_Door : MonoBehaviour, I_InterractableVisual
 
         nextDoor.room.ExecutePlayerEnterRoomEvent();
 
-        Camera.main.transform.position = GetCameraNextDoorPosition();
+        GetCameraNextDoorPosition();
     }
     public void InterractDoor(GhostBuster ghostBuster)
     {
@@ -64,13 +64,36 @@ public class Environment_Door : MonoBehaviour, I_InterractableVisual
         
         //ghostBuster.GetMoveAction().StartIdlingTheRoom();
     }
-    private Transform GetCameraTransform()
-    {
-        return cameraPosition;
-    }
     private Vector3 GetCameraNextDoorPosition()
     {
-        return nextDoor.GetCameraTransform().position;
+        Vector3 position = nextDoor.transform.position;
+        float roomMinX, roomMaxX;
+        nextDoor.room.GetGroundHorizontalBoundForCamera(out roomMinX, out roomMaxX);
+        position.x = Mathf.Clamp(position.x, roomMinX, roomMaxX);
+        position.z = -10;
+
+        // Set camera position directly without any transition
+        Camera.main.transform.position = position;
+
+        // Get viewport positions of min and max bounds
+        Vector3 minBound = Camera.main.WorldToViewportPoint(new Vector3(roomMinX, 0, 0));
+        Vector3 maxBound = Camera.main.WorldToViewportPoint(new Vector3(roomMaxX, 0, 0));
+
+        // Adjust camera position to match desired viewport bounds instantly
+        if (maxBound.x > 0.8f)
+        {
+            Vector3 newPosition = Camera.main.ViewportToWorldPoint(new Vector3(1, 0, 0));
+            Camera.main.transform.position = new Vector3(newPosition.x, position.y, position.z);
+        }
+        if (minBound.x < 0.3f)
+        {
+            Vector3 newPosition = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0));
+            Camera.main.transform.position = new Vector3(newPosition.x, position.y, position.z);
+        }
+
+        return position;
+
+
     }
     public Room GetRoomNextDoor()
     {
