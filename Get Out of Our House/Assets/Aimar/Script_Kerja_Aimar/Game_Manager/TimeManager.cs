@@ -92,4 +92,8 @@ public class TimeManager : MonoBehaviour
         OneSecondIntervalEventAction?.Invoke(timerEvent);
         OneSecondIntervalEventUI?.Invoke(new TimeData(hour,minute,timeState));
     }
+    public int GetTimerEvent()
+    {
+        return timerEvent;
+    }
 }

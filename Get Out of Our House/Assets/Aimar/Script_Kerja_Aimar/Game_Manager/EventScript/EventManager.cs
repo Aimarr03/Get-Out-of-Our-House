@@ -18,7 +18,9 @@ public class EventManager : MonoBehaviour
     {
         Queue<EventAction> moveActions = new Queue<EventAction>(DataEvents.instance._ListOfMoveAction);
         Queue<EventAction> dialogueActions = new Queue<EventAction>(DataEvents.instance._ListOfDialogueAction);
+        Queue<EventAction> callActions = new Queue<EventAction> (DataEvents.instance._ListOfCallAction);
         eventActions = CombinesQueue(moveActions, dialogueActions);
+        eventActions = CombinesQueue(eventActions, callActions);
         eventActions = new Queue<EventAction>(eventActions.OrderBy(ac => ac.timerEvent));
         currentEventAction = eventActions.Dequeue();
         TimeManager.instance.OneSecondIntervalEventAction += Instance_OneSecondIntervalEventAction;

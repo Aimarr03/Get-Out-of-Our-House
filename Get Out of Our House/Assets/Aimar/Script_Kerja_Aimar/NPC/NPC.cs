@@ -119,4 +119,8 @@ public class NPC : MonoBehaviour
     {
         EventManager.Instance.SetCurrentActionConditions(!isPanic);
     }
+    public void HasFear()
+    {
+        EventManager.Instance.SetCurrentActionConditions(fearMeter > 0);
+    }
 }
