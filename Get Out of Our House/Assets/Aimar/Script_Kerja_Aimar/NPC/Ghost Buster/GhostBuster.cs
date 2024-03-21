@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Windows;
 
-public class GhostBuster : MonoBehaviour
+public class GhostBuster : MonoBehaviour,I_InterractableVisual
 {
     public enum StateDirection
     {
@@ -18,22 +19,29 @@ public class GhostBuster : MonoBehaviour
     private int maxSanityArmor;
     private GhostBuster_Move_Action moveAction;
     private Animator ghostBusterAnimator;
+    public bool Insane;
     [SerializeField] private Room currentRoom;
     private Ghost ghost;
-    private float currentUndetectedDurationGhost;
+    private ParticleSystem agitatedEffect;
     [SerializeField] private float maxUndetectedDurationGhost;
+    [SerializeField] private GameObject VisualAid;
     public event Action<bool, Room> GhostDetected;
     private float maxTimerGhostGone;
+    public Transform CenterPosition;
     private void Awake()
     {
-
+        Insane = false;
         moveAction = GetComponent<GhostBuster_Move_Action>();
         ghostBusterAnimator = transform.GetChild(0).GetComponent<Animator>();
+        agitatedEffect = transform.GetChild(1).GetComponent<ParticleSystem>();
+        CenterPosition = transform.GetChild(2);
+        VisualAid = transform.GetChild(3).gameObject;
+        VisualAid.SetActive(false);
         isVunerable = false;
         maxSanityArmor = 1;
         maxTimerGhostGone = 1.5f;
         sanityArmor = maxSanityArmor;
-        sanity = 1;
+        sanity = 3;
     }
     private void Start()
     {
@@ -98,26 +106,35 @@ public class GhostBuster : MonoBehaviour
     {
         Debug.Log("Ghost Buster is Surprised");
         sanityArmor--;
+        ghostBusterAnimator.SetTrigger("Low Damage");
         if(sanityArmor <= 0)
         {
             isVunerable = true;
         }
         return sanityArmor <= 0;
     }
-    public bool Fear()
+    public async void Fear()
     {
         Debug.Log("Ghost is disturbed");
         if(isVunerable)
         {
+            ghostBusterAnimator.SetTrigger("Mid Damage");
+            var mainModule = agitatedEffect.main;
+            agitatedEffect.Stop();
+            await Task.Delay(700);
+            mainModule.duration -= 0.24f;
+            agitatedEffect.Play();
             sanity--;
             sanityArmor = maxSanityArmor;
             isVunerable= false;
             if(sanity <= 0)
             {
-                ghostBusterAnimator.SetBool("IsDead", true);
+                Insane = true;
+                agitatedEffect.Stop();
+                ghostBusterAnimator.SetBool("Dead", true);
             }
         }
-        return sanity <= 0;
+        
     }
     public bool CheckVunerability()
     {
@@ -152,5 +169,11 @@ public class GhostBuster : MonoBehaviour
     public void SetTrigger(string trigger)
     {
         ghostBusterAnimator.SetTrigger(trigger);
+    }
+
+    public void SetLightInterractableVisual(bool input)
+    {
+        if (Insane) return;
+        VisualAid.gameObject.SetActive(input);
     }
 }

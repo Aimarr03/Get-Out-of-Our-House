@@ -20,14 +20,12 @@ public class EventManager : MonoBehaviour
         Queue<EventAction> dialogueActions = new Queue<EventAction>(DataEvents.instance._ListOfDialogueAction);
         eventActions = CombinesQueue(moveActions, dialogueActions);
         eventActions = new Queue<EventAction>(eventActions.OrderBy(ac => ac.timerEvent));
-        if (eventActions.Count == 0) return;
         currentEventAction = eventActions.Dequeue();
         TimeManager.instance.OneSecondIntervalEventAction += Instance_OneSecondIntervalEventAction;
     }
 
     private void Instance_OneSecondIntervalEventAction(int timerEvent)
     {
-        currentEventAction = null;
         if(currentEventAction == null) return;
         if(currentEventAction.timerEvent == timerEvent)
         {

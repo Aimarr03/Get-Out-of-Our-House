@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using static GhostBuster;
 
 public class NPC_Move_Action : MonoBehaviour
 {
@@ -15,27 +16,28 @@ public class NPC_Move_Action : MonoBehaviour
     #region testing
     [SerializeField] private Transform TestingTargetLocation;
     #endregion
+    private Queue<Environment_Door> transformList;
     [SerializeField] private Vector3 targetLocation;
     [SerializeField] private Vector2 collisionSize;
     [SerializeField] private float movementSpeed;
     
     private NPC npc;
-    private MoveAction moveAction;
+    public MoveAction moveAction;
     private void Awake()
     {
         npc = GetComponent<NPC>();
     }
     private void Start()
     {
-        //SetTargetLocation(TestingTargetLocation.position);
+        StartIdlingTheRoom();
     }
-    private async Task MoveAction()
+    private IEnumerator MoveAction()
     {
         Debug.Log(Vector3.Distance(targetLocation, transform.position));
         while(Vector3.Distance(targetLocation, transform.position) > 0.15f)
         {
             MovingTowards();
-            await Task.Yield();
+            yield return null;
         }
         DetectionBox();
     }
@@ -50,34 +52,83 @@ public class NPC_Move_Action : MonoBehaviour
             }
         }
     }
-    public async Task SetTargetLocation(Vector3 targetLocation)
+    public IEnumerator Test()
     {
+        Debug.Log("NGENTOT");
+        yield return new WaitForSeconds(0.01f);
+    }
+    public IEnumerator SetTargetLocation(Vector3 targetLocation)
+    {
+        Debug.Log("Set Target " + targetLocation);
         targetLocation.y = transform.position.y;
         this.targetLocation = targetLocation;
-        await MoveAction();
-        await Task.Yield();
+        yield return MoveActionCoroutine();
     }
-    
+    public IEnumerator SetTargetLocation(float min, float max)
+    {
+        float result = Random.Range(min, max);
+        Vector3 newPosition = new Vector3(result, transform.position.y, 0);
+        targetLocation = newPosition;
+        yield return MoveActionCoroutine();
+        npc.GetAnimator().StartPlayback();
+        yield return new WaitForSeconds(Random.Range(0.8f, 1.2f));
+        npc.GetAnimator().StopPlayback();
+        StartIdlingTheRoom();
+    }
+    private IEnumerator MoveActionCoroutine()
+    {
+        while (Vector3.Distance(targetLocation, transform.position) > 0.15f)
+        {
+            npc.GetAnimator().SetFloat("IsMoving", 1);
+            MovingTowards();
+            yield return null;
+        }
+        DetectionBox();
+        npc.GetAnimator().SetFloat("IsMoving", -1);
+    }
+
     public void MovingTowards()
     {
         //Debug.Log("Moving Towards");
         Vector3 currentPosition = transform.position;
+        npc.FlippingSprite(targetLocation);
         transform.position = Vector3.MoveTowards(currentPosition, targetLocation, movementSpeed * Time.deltaTime);
     }
-     public void SetMoveAction(MoveAction moveAction)
+    public void StartIdlingTheRoom()
+    {
+        StopAllCoroutines();
+        Debug.Log("NPC Idling");
+        Room room = npc.GetRoom();
+        room.GetGroundHorizontalBound(out float minBound, out float maxBound);
+        //StopCoroutine(SetTargetLocation(minBound, maxBound));
+        StartCoroutine(SetTargetLocation(minBound, maxBound));
+    }
+    public void SetMoveAction(MoveAction moveAction)
     {
         this.moveAction = moveAction;
+        StopAllCoroutines();
+        transformList = new Queue<Environment_Door>(moveAction.DestinationLocation);
+        StartCoroutine(StartMoveAction());
     }
-    public void StartAction()
+    private IEnumerator StartMoveAction()
     {
-        
+        if(transformList.Count > 0)
+        {
+            Environment_Door newTarget = transformList.Dequeue();
+            Debug.Log("List " + transformList.Count);
+            Debug.Log("NPC " + npc + " going to " + newTarget.transform.position);
+            yield return SetTargetLocation(newTarget.transform.position);
+            StartCoroutine(StartMoveAction());
+        }
+        else
+        {
+            Debug.Log("Done");
+            Done();
+        }
     }
-    public void ContinueAction()
+    private void Done()
     {
-
-    }
-    public void StopAction()
-    {
-        
+        moveAction = null;
+        StartIdlingTheRoom();
     }
 }

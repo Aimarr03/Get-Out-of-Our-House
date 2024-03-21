@@ -10,10 +10,12 @@ public class Ghost : MonoBehaviour
     public bool IsUltimateForm;
     public static event Action<Ghost> PosessingSomething;
     private SpriteRenderer spriteRenderer;
-    public static float speed = 6;
+    public static float speed = 9;
     private static int UltimateMoveAccumulation;
     private static int UltimateMoveLimit;
     private Rigidbody2D rb;
+    private Animator animator;
+    public Transform GhostPowerEffect;
     public static bool canMove = true;
     public static bool isPosessingObject;
     public static bool isPosessingPerson;
@@ -22,10 +24,17 @@ public class Ghost : MonoBehaviour
     [SerializeField] private Room currentRoom;
     [SerializeField] private LayerMask visible;
     [SerializeField] private LayerMask invisible;
+
+    private PosessPerson possessPerson;
+    private PossesingObject possessObject;
+    private GameObject currentGameObject;
     private void Awake()
     {
+        possessPerson = GetComponent<PosessPerson>();
+        possessObject = GetComponent<PossesingObject>();
         IsUltimateForm = false;
-        spriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        spriteRenderer = transform.GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
         UltimateMoveAccumulation = 0;
         UltimateMoveLimit = 1;
     }
@@ -35,8 +44,8 @@ public class Ghost : MonoBehaviour
         //currentRoom.PlayParticleSystem(true);
         PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
         PlayerControllerManager.instance.InvokeUltimate += Instance_InvokeUltimate;
-        //DialogueManager.instance.beginDialogue += Instance_beginDialogue;
-        //DialogueManager.instance.endDialogue += Instance_endDialogue;
+        DialogueManager.instance.beginDialogue += Instance_beginDialogue;
+        DialogueManager.instance.endDialogue += Instance_endDialogue;
     }
 
     private void Instance_InvokeUltimate()
@@ -46,16 +55,20 @@ public class Ghost : MonoBehaviour
     }
     private IEnumerator UltimateActive()
     {
-        spriteRenderer.color = Color.red;
+        UltimateMoveAccumulation = 0;
+        spriteRenderer.color = Color.black;
         IsUltimateForm = true;
         yield return new WaitForSeconds(3.3f);
         IsUltimateForm = false;
         spriteRenderer.color = Color.white;
+        animator.SetBool("PowerUp", false);
+        GhostPowerEffect.gameObject.SetActive(false);
     }
     public void UseUltimateEffect()
     {
         IsUltimateForm = false;
         spriteRenderer.color = Color.white;
+        GhostPowerEffect.gameObject.SetActive(false);
     }
 
     private void Instance_endDialogue()
@@ -72,68 +85,137 @@ public class Ghost : MonoBehaviour
 
     private void Instance_InvokeInterract()
     {
-        if (IsUltimateForm) return;
         Debug.Log("Invoke Interract");
-        Collider2D[] collider = Physics2D.OverlapBoxAll(transform.position, boxSize, 0);
-        foreach (Collider2D collider2d in collider)
+        if (currentGameObject == null) return;
+        if (currentGameObject.tag == "PeopleInside")
         {
-            if (collider2d.TryGetComponent<Environment_Door>(out Environment_Door door))
-            {
-                door.InterractDoor(this);
-            }
+            Debug.Log("Invoke Possess Person");
+            possessPerson.Instance_InvokeInterract(this, currentGameObject);
+        }
+        else if(currentGameObject.TryGetComponent<Environment_Door>(out Environment_Door door)){
+            Debug.Log("Invoke Interract Door");
+            door.InterractDoor(this);
+        }
+        else if (currentGameObject.tag == "object")
+        {
+            Debug.Log("Invoke Possess Object");
+            possessObject.Instance_InvokeInterract(this, currentGameObject);
         }
     }
 
     // Update is called once per frame
     void Update()
     {
+        AssignNearestInterractableItems();
         if (UltimateMoveAccumulation >= UltimateMoveLimit)
         {
-            if (IsUltimateForm) Debug.Log("ULTIMATEEEE");
-            else Debug.Log("Ultimate Ready");
+            animator.SetBool("PowerUp", true);
         }
-        /*Debug.Log("Person " + isPosessingPerson);
-        Debug.Log("Object " + isPosessingObject);
-        Debug.Log("Can Moving " + canMove);*/
-        if (!canMove) //Debug.Log("Pernah False");
+        if (!canMove) 
         if (isPosessingObject || isPosessingPerson)
         {
             GetComponent<SpriteRenderer>().enabled = false;
             canMove = false;
-            //gameObject.layer = 8; 
-            //Debug.Log("Masuk Posessing Cuy!");
         }
         else
         {
             GetComponent<SpriteRenderer>().enabled = true;
             canMove = true;
-            //gameObject.layer = 6; 
         }
         if (!canMove) return;
         moving();
+    }
+    public void AssignNearestInterractableItems()
+    {
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(transform.position, boxSize, 0f);
+        if (colliders.Length > 0)
+        {
+            Collider2D nearestCollider = null;
+            float nearestDistance = Mathf.Infinity;
+            foreach (Collider2D collider in colliders)
+            {
+                //Debug.Log(collider.ToString() + (collider.CompareTag("Floor") || collider.CompareTag("People") || collider.CompareTag("Player")));
+                if (collider.CompareTag("Floor") || collider.CompareTag("People") || collider.CompareTag("Player")) continue;
+                if (IsUltimateForm && !collider.CompareTag("PeopleInside")) continue;
+                Vector3 colliderPosition = collider.transform.position;
+                if (collider.CompareTag("PeopleInside"))
+                {
+                    if (collider.TryGetComponent<GhostBuster>(out GhostBuster ghostBuster))
+                    {
+                        colliderPosition += ghostBuster.CenterPosition.position;
+                    }
+                }
+                float distance = Vector2.Distance(transform.position, collider.transform.position);
+                if (distance < nearestDistance)
+                {
+                    nearestCollider = collider;
+                    nearestDistance = distance;
+                }
+            }
+            if (nearestCollider != null)
+            {
+                //
+                //Debug.Log(nearestCollider.gameObject.ToString());
+                //if (currentGameObject == null || currentGameObject != nearestCollider.gameObject) return;
+                if(nearestCollider.TryGetComponent<I_InterractableVisual>(out I_InterractableVisual interractableObject))
+                {
+                    if(currentGameObject != null)
+                    {
+                        if (currentGameObject.TryGetComponent<I_InterractableVisual>(out I_InterractableVisual oldInterractableObject))
+                        {
+                            oldInterractableObject.SetLightInterractableVisual(false);
+                        }
+                    }
+                    interractableObject.SetLightInterractableVisual(true);
+                    currentGameObject = nearestCollider.gameObject;
+                }
+            }
+            else
+            {
+                if (currentGameObject != null)
+                {
+                    if (currentGameObject.TryGetComponent<I_InterractableVisual>(out I_InterractableVisual interractableVisual))
+                    {
+                        interractableVisual.SetLightInterractableVisual(false);
+                    }
+                    currentGameObject = null;
+                }
+            }
+        }
+        else
+        {
+            if(currentGameObject != null)
+            {
+                if (currentGameObject.TryGetComponent<I_InterractableVisual>(out I_InterractableVisual interractableVisual))
+                {
+                    interractableVisual.SetLightInterractableVisual(false);
+                }
+                currentGameObject = null;
+            }
+        }
     }
 
     void moving()
     {
         Vector2 inputMovement = PlayerControllerManager.instance.GetVector2Input();
-        //Debug.Log(inputMovement);
-        //float movingX = Input.GetAxis("Horizontal");
-        //float movingY = Input.GetAxis("Vertical");
         float theSpeed = IsUltimateForm ? speed * 2 : speed;
-        rb.velocity = new Vector2(inputMovement.x * theSpeed, inputMovement.y * theSpeed);
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        currentRoom.GetGroundHorizontalBoundForPlayer(out float min, out float max);
+        float xPosition = transform.position.x;
+        if (xPosition >= min && xPosition <= max)
         {
-            speed = 12;
+            rb.velocity = new Vector2(inputMovement.x * theSpeed, inputMovement.y * theSpeed);
         }
-        if (Input.GetKeyUp(KeyCode.LeftShift))
+        else
         {
-            speed = 6;
+            rb.velocity = Vector2.zero;
+            float clampedX = Mathf.Clamp(xPosition, min, max);
+            transform.position = new Vector3(clampedX, transform.position.y, transform.position.z);
         }
         if (inputMovement.x < 0)
         {
             transform.localScale = new Vector2(1, 1);
         }
-        if (inputMovement.x > 0)
+        else if (inputMovement.x > 0)
         {
             transform.localScale = new Vector2(-1, 1);
         }
@@ -150,6 +232,8 @@ public class Ghost : MonoBehaviour
     {
         isPosessing = input;
         isPosessingObject = input;
+        GhostPowerEffect.gameObject.SetActive(!input);
+        if(UltimateMoveAccumulation < UltimateMoveLimit) GhostPowerEffect.gameObject.SetActive(false);
         GetComponent<SpriteRenderer>().enabled = !input;
         canMove = !input;
         Debug.Log($"visible layer {LayerMask.NameToLayer("Ghost")}");
@@ -161,5 +245,9 @@ public class Ghost : MonoBehaviour
     {
         UltimateMoveAccumulation = Math.Clamp(UltimateMoveAccumulation + 1, 0,UltimateMoveLimit);
     }
-    
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireCube(transform.position, boxSize);
+    }
+
 }

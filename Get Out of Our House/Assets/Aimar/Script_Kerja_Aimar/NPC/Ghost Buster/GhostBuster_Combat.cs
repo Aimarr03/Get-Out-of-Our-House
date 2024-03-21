@@ -84,7 +84,7 @@ public class GhostBuster_Combat : MonoBehaviour
                 currentPrepareDuration = 0;
                 currentAttackInterval = 0;
             }
-            Debug.Log("Ghost Detected");
+            //Debug.Log("Ghost Detected");
             currentState = CombatState.Attack;
             ghostBuster.GetAnimator().SetFloat("IsMoving", -1);
         }
@@ -96,7 +96,7 @@ public class GhostBuster_Combat : MonoBehaviour
             ghostPosition = new Vector3(ghostPosition.x, transform.position.y, ghostPosition.z);
             ghostBuster.FlippingSprite(ghostPosition);
             ghostBuster.GetAnimator().SetFloat("IsMoving", 1);
-            Debug.Log("Ghost Approaching");
+            //Debug.Log("Ghost Approaching");
             transform.position = Vector2.MoveTowards(transform.position, ghostPosition, moveAction.GetMovementSpeed() * Time.deltaTime);
             currentState = CombatState.Aggro;
         }
@@ -105,7 +105,7 @@ public class GhostBuster_Combat : MonoBehaviour
     {
         if (currentPrepareDuration < preparingAttackDuration)
         {
-            Debug.Log("Preparing To Attack");
+            //Debug.Log("Preparing To Attack");
             currentPrepareDuration += Time.deltaTime;
             return;
         }
@@ -120,9 +120,9 @@ public class GhostBuster_Combat : MonoBehaviour
     private void PullAttack(Rigidbody2D ghostRigidbody)
     {
         if (ghostRigidbody.GetComponent<Ghost>().IsUltimateForm) return;
-        Vector2 direction = (transform.position - ghostRigidbody.transform.position).normalized;
+        Vector2 direction = (ghostBuster.CenterPosition.position - ghostRigidbody.transform.position).normalized;
         ghostRigidbody.AddForce(direction * pullForce);
-        Debug.Log("Pulling Ghost");
+        //Debug.Log("Pulling Ghost");
         currentAttackInterval += Time.deltaTime;
         if (currentAttackInterval >= attackInterval)
         {
