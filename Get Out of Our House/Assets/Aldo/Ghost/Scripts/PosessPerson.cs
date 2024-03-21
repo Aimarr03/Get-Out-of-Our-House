@@ -6,49 +6,35 @@ using UnityEngine;
 public class PosessPerson : MonoBehaviour
 {
     public GameObject targetPosess;
-    private Ghost ghost;
-    private void Awake()
-    {
-        ghost = GetComponent<Ghost>();
-    }
 
-    // Start is called before the first frame update
-    void Start()
+    public void Instance_InvokeInterract(Ghost ghost, GameObject gameObject)
     {
-        PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
-        //DialogueManager.instance.beginDialogue += Instance_beginDialogue;
-        //DialogueManager.instance.endDialogue += Instance_endDialogue;
-    }
-
-    private void Instance_endDialogue()
-    {
-        PlayerControllerManager.instance.InvokeInterract -= Instance_InvokeInterract;
-    }
-
-    private void Instance_beginDialogue()
-    {
-        PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
-    }
-
-    private void Instance_InvokeInterract()
-    {
-        if (ghost.IsUltimateForm)
+        if(ghost != null)
         {
-            UltimateAction();
+            targetPosess = gameObject;
+        }
+        else
+        {
+            targetPosess = null;
+        }
+        if (ghost.IsUltimateForm && gameObject.TryGetComponent<GhostBuster>(out GhostBuster buster))
+        {
+            UltimateAction(ghost, gameObject);
             return;
         }
-        if (targetPosess != null && targetPosess.GetComponent<FearMeter>().fearMeter >= 5)
+        else if(gameObject.TryGetComponent<FearMeter>(out FearMeter fearmeter))
         {
-            Debug.Log("Poesess Person");
-            targetPosess.GetComponent<Posessed>().isPosessed = true;
-            Ghost.isPosessingPerson = true;
+            if(fearmeter.fearMeter >= 5)
+            {
+                targetPosess.GetComponent<Posessed>().isPosessed = true;
+                Ghost.isPosessingPerson = true;
+            }
         }
     }
-    private void UltimateAction()
+    private void UltimateAction(Ghost ghost, GameObject gameObject)
     {
-        Collider2D collision = Physics2D.OverlapCircle(transform.position, 6, ghost.ghostBusterLayerMask);
-        Debug.Log(collision.ToString());
-        if(collision.TryGetComponent<GhostBuster>(out GhostBuster buster))
+        
+        if(gameObject.TryGetComponent<GhostBuster>(out GhostBuster buster))
         {
             if (buster.CheckVunerability())
             {
@@ -67,7 +53,7 @@ public class PosessPerson : MonoBehaviour
         }
     }
     
-    private void OnTriggerEnter2D(Collider2D collision)
+    /*private void OnTriggerEnter2D(Collider2D collision)
     {
         if(targetPosess == null && collision.tag== "PeopleInside") 
         {
@@ -82,5 +68,5 @@ public class PosessPerson : MonoBehaviour
         {
             targetPosess = null;
         }
-    }
+    }*/
 }

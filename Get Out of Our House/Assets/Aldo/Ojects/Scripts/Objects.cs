@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Objects : MonoBehaviour
+public class Objects : MonoBehaviour, I_InterractableVisual
 {
     public enum ObjectType
     {
@@ -16,6 +16,7 @@ public class Objects : MonoBehaviour
     public bool canDrop = false;
     private GameObject targetPeople;
     private SpriteRenderer interractedVisual;
+    [SerializeField] GameObject LightField;
 
     [SerializeField] private float radiusCollision;
     [SerializeField] private Sprite TouchFloorSprite;
@@ -23,6 +24,11 @@ public class Objects : MonoBehaviour
     [SerializeField] private Transform lightSource;
     [SerializeField] private bool currentInterract = true;
     // Start is called before the first frame update
+    private void Awake()
+    {
+        LightField = transform.GetChild(0).gameObject;
+        LightField.SetActive(false);
+    }
     void Start()
     {
         interractedVisual = GetComponent<SpriteRenderer>();
@@ -180,5 +186,11 @@ public class Objects : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(transform.position, radiusCollision);
+    }
+
+    public void SetLightInterractableVisual(bool input)
+    {
+        if(isPosessed) LightField.gameObject.SetActive(false);
+        LightField.gameObject.SetActive(input);
     }
 }

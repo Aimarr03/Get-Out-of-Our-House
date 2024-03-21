@@ -2,12 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Environment_Door : MonoBehaviour
+public class Environment_Door : MonoBehaviour, I_InterractableVisual
 {
+    [SerializeField] private Transform LightField;
     [SerializeField] private Environment_Door nextDoor;
     [SerializeField] private Transform cameraPosition;
     [SerializeField] private Room room;
     private Vector3 Position;
+    private void Awake()
+    {
+        LightField = transform.GetChild(0);
+        LightField.gameObject.SetActive(false);
+    }
     private void Start()
     {
         Position = transform.position;
@@ -77,5 +83,10 @@ public class Environment_Door : MonoBehaviour
     public Vector3 GetPosition()
     {
         return Position;
+    }
+
+    public void SetLightInterractableVisual(bool input)
+    {
+        LightField.gameObject.SetActive(input);
     }
 }

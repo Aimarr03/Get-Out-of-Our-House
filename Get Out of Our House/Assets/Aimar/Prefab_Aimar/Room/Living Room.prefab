@@ -90,6 +90,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cad598ad95e4fb14ebe410810358ab76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LightField: {fileID: 0}
   nextDoor: {fileID: 0}
   cameraPosition: {fileID: 0}
   room: {fileID: 519885019032119353}
@@ -183,6 +184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cad598ad95e4fb14ebe410810358ab76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LightField: {fileID: 0}
   nextDoor: {fileID: 0}
   cameraPosition: {fileID: 0}
   room: {fileID: 519885019032119353}

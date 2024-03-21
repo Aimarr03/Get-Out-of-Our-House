@@ -6,32 +6,20 @@ using UnityEngine;
 public class PossesingObject : MonoBehaviour
 {
     private GameObject otherObject;
-    private Ghost ghost;
-
-    // Start is called before the first frame update
-    private void Awake()
-    {
-        ghost = GetComponent<Ghost>();
-    }
     void Start()
     {
-        PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
-        DialogueManager.instance.endDialogue += Instance_endDialogue;
-        DialogueManager.instance.beginDialogue += Instance_beginDialogue;
+        
     }
-
-    private void Instance_beginDialogue()
+    public void Instance_InvokeInterract(Ghost ghost, GameObject gameObject)
     {
-        PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
-    }
-
-    private void Instance_endDialogue()
-    {
-        PlayerControllerManager.instance.InvokeInterract -= Instance_InvokeInterract;
-    }
-
-    private void Instance_InvokeInterract()
-    {
+        if (ghost != null)
+        {
+            otherObject = gameObject;
+        }
+        else
+        {
+            otherObject = null;
+        }
         if (ghost.IsUltimateForm) return;
         if (!Ghost.isPosessing && otherObject != null)
         {
@@ -71,7 +59,7 @@ public class PossesingObject : MonoBehaviour
         }
     }*/
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    /*private void OnTriggerEnter2D(Collider2D collision)
     {
         if (otherObject == null && collision.tag == "object" && collision.GetComponent<Objects>().canPosessed)
         {
@@ -92,5 +80,5 @@ public class PossesingObject : MonoBehaviour
                 Ghost.isPosessingObject = false;
             }
         }
-    }
+    }*/
 }
