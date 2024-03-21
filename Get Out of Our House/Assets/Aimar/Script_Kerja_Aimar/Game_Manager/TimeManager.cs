@@ -47,7 +47,7 @@ public class TimeManager : MonoBehaviour
             return;
         }
         instance = this;
-        hour = 8;
+        hour = 7;
         minute = 0;
         timeState = TwelveHourClockState.PM;
         currentTime = 0;

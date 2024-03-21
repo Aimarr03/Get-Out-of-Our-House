@@ -25,6 +25,7 @@ public class Environment_Door : MonoBehaviour, I_InterractableVisual
 
         room.RemoveCharacter(npc.gameObject);
         npc.DesubscribeToRoom(room);
+        npc.SetRoom(nextDoor.room);
         npc.SubscribeToRoom(nextDoor.room);
         nextDoor.room.AddCharacter(npc.gameObject);
         npc.transform.position = targetPosition;
