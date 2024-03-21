@@ -1,3 +1,4 @@
+using DialogueEditor;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,16 +14,19 @@ public class NPC : MonoBehaviour
         Mom
     }
     public NPC_Type type;
+    public bool isVunerable;
     [SerializeField] private Room currentRoom;
     [SerializeField] private Animator animator;
     [SerializeField] private DialogueAction dialogueAction;
-    [SerializeField] private InterractingAction interractionAction;
+    [SerializeField] private BehaviourAction behaviourAction;
+    [SerializeField] public ParticleSystem showerParticle;
     private NPC_Move_Action moveAction;
     public int fearMeter;
     public bool IsBusy;
     public bool isPanic;
     public event Action panicAttack;
     public float currentTimerPanic;
+    public bool hasDialogue;
     public enum StateDirection
     {
         Left,
@@ -45,17 +49,27 @@ public class NPC : MonoBehaviour
     private void Instance_OneSecondIntervalEventAction(int currentimer)
     {
         if(dialogueAction != null) DialogueCheckCondition();
-        if (interractionAction != null) CheckInterraction();
+        if (IsBusy) CheckInterraction();
     }
     private void CheckInterraction()
     {
-        interractionAction.duration--;
+        /*interractionAction.duration--;
         if(interractionAction.duration <= 0)
         {
-            Debug.Log(gameObject + "interraction finish");
-            interractionAction = null;
-            IsBusy = false;
-        }
+            ClearInterraction();
+        }*/
+    }
+    private void ClearInterraction()
+    {
+        /*Debug.Log(gameObject + "interraction finish");
+        interractionAction = null;
+        IsBusy = false;
+        animator.SetBool("IsBusy", false);
+        moveAction.StartIdlingTheRoom();
+        if(type == NPC_Type.Child)
+        {
+            showerParticle.Stop();
+        }*/
     }
     private void DialogueCheckCondition()
     {
@@ -85,8 +99,13 @@ public class NPC : MonoBehaviour
             transform.rotation = Quaternion.Euler(new Vector3(0, rotation_y, 0));
         }
     }
-    public void SetInterractionAction(InterractingAction interractAction) => interractionAction = interractAction;
-    public InterractingAction GetInterractingAction() => interractionAction;
+    public void SetBehaviour(BehaviourAction action)
+    {
+        Debug.Log("Behaviour Action Invoked");
+        behaviourAction = action;
+        IsBusy = true;
+        moveAction.SetInterract(action.direction);
+    }
 
     public void SetRoom(Room room) => currentRoom = room;
     public Room GetRoom() => currentRoom;
@@ -96,8 +115,10 @@ public class NPC : MonoBehaviour
     public NPC_Move_Action GetMoveAction() => moveAction;
     public void SetDialogueAction(DialogueAction dialogueAction) => this.dialogueAction = dialogueAction;
     public void TestingMakeFalse() => EventManager.Instance.SetCurrentActionConditions(false);
+    
     public void TriggerFear(Objects.ObjectType objectType, Objects prop)
     {
+        if (!isVunerable) return;
         switch (objectType)
         {
             case Objects.ObjectType.Lightable:
@@ -113,6 +134,7 @@ public class NPC : MonoBehaviour
                 panicAttack?.Invoke();
                 Debug.Log("Trigger Fear " + transform.ToString());
                 currentTimerPanic = 0;
+                ClearInterraction();
                 PanicCooldown();
                 break;
         }
@@ -141,5 +163,19 @@ public class NPC : MonoBehaviour
     public void CheckNotFear()
     {
         EventManager.Instance.SetCurrentActionConditions(fearMeter == 0);
+    }
+    public void CheckFearExceed(int parameter)
+    {
+        EventManager.Instance.SetCurrentActionConditions(fearMeter >= parameter);
+    }
+    public void SetVunerable()
+    {
+        Debug.Log(gameObject + " is now vunerable");
+        isVunerable = true;
+    }
+    public void GetBUsyStatus()
+    {
+        Debug.Log(gameObject + " is Busy status " + IsBusy);
+        EventManager.Instance.SetCurrentActionConditions(!IsBusy);
     }
 }

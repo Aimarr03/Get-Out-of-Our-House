@@ -35,7 +35,26 @@ public class NPC_Move_Action : MonoBehaviour
         StartIdlingTheRoom();
         npc.panicAttack += Npc_panicAttack;
     }
-
+    public void SetInterract(float position)
+    {
+        Debug.Log("Preparing to Interract");
+        isMovingByEvent = false;
+        Vector3 targPosition = new Vector3(position, transform.position.y, 0);
+        npc.GetAnimator().SetFloat("IsMoving", -1);
+        StopAllCoroutines();
+        StartCoroutine(InterractAction(targPosition));
+    }
+    private IEnumerator InterractAction(Vector3 targetPosition)
+    {
+        Debug.Log(npc + " going to " + targetPosition);
+        yield return SetTargetLocation(targetPosition);
+        Debug.Log(npc + " is Busy doing their activity");
+        npc.GetAnimator().SetBool("IsBusy", true);
+        if(npc.type == NPC.NPC_Type.Child)
+        {
+            npc.showerParticle.Play();
+        }
+    }
     private void Npc_panicAttack()
     {
         isMovingByEvent = true;
@@ -65,7 +84,7 @@ public class NPC_Move_Action : MonoBehaviour
     }
     private void DetectionBox()
     {
-        Debug.Log(npc +" is Detecting with panic status " +npc.isPanic);
+        //Debug.Log(npc +" is Detecting with panic status " +npc.isPanic);
         if (!isMovingByEvent) return;
         Collider2D[] collisionObject = Physics2D.OverlapBoxAll(transform.position, collisionSize, 0);
         foreach (Collider2D currentObject in collisionObject)
@@ -111,7 +130,7 @@ public class NPC_Move_Action : MonoBehaviour
         DetectionBox();
         npc.GetAnimator().SetFloat("IsMoving", -1);
     }
-
+    
     public void MovingTowards()
     {
         //Debug.Log("Moving Towards");
@@ -123,7 +142,7 @@ public class NPC_Move_Action : MonoBehaviour
     public void StartIdlingTheRoom()
     {
         StopAllCoroutines();
-        Debug.Log("NPC Idling");
+        //Debug.Log("NPC Idling");
         Room room = npc.GetRoom();
         room.GetGroundHorizontalBound(out float minBound, out float maxBound);
         //StopCoroutine(SetTargetLocation(minBound, maxBound));
@@ -142,7 +161,7 @@ public class NPC_Move_Action : MonoBehaviour
         {
             isMovingByEvent = true;
             Environment_Door newTarget = transformList.Dequeue();
-            Debug.Log("List " + transformList.Count);
+            //Debug.Log("List " + transformList.Count);
             Debug.Log("NPC " + npc + " going to " + newTarget.transform.position);
             yield return SetTargetLocation(newTarget.transform.position);
             StartCoroutine(StartMoveAction());
