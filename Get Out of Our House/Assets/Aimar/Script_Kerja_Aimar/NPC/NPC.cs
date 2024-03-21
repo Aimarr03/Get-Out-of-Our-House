@@ -1,14 +1,27 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class NPC : MonoBehaviour
 {
+    public enum NPC_Type
+    {
+        Child,
+        Dad,
+        Mom
+    }
+    public NPC_Type type;
     [SerializeField] private Room currentRoom;
     [SerializeField] private Animator animator;
     [SerializeField] private DialogueAction dialogueAction;
     private NPC_Move_Action moveAction;
-
+    public int fearMeter;
+    public bool IsBusy;
+    public bool isPanic;
+    public event Action panicAttack;
+    public float currentTimerPanic;
     public enum StateDirection
     {
         Left,
@@ -17,10 +30,17 @@ public class NPC : MonoBehaviour
     public StateDirection currentDirection = StateDirection.Left;
     private void Awake()
     {
+        IsBusy = false;
+        isPanic = false;
+        fearMeter = 0;
         moveAction = GetComponent<NPC_Move_Action>();
+        
         TimeManager.instance.OneSecondIntervalEventAction += Instance_OneSecondIntervalEventAction;
     }
-
+    private void Start()
+    {
+        if (currentRoom != null) currentRoom.AddCharacter(gameObject);
+    }
     private void Instance_OneSecondIntervalEventAction(int currentimer)
     {
         if(dialogueAction != null) DialogueCheckCondition();
@@ -61,5 +81,42 @@ public class NPC : MonoBehaviour
     public NPC_Move_Action GetMoveAction() => moveAction;
     public void SetDialogueAction(DialogueAction dialogueAction) => this.dialogueAction = dialogueAction;
     public void TestingMakeFalse() => EventManager.Instance.SetCurrentActionConditions(false);
-
+    public void TriggerFear(Objects.ObjectType objectType, Objects prop)
+    {
+        switch (objectType)
+        {
+            case Objects.ObjectType.Lightable:
+                if (type != NPC_Type.Child) return;
+                fearMeter++;
+                panicAttack?.Invoke();
+                Debug.Log("Trigger Fear " + transform.ToString());
+                currentTimerPanic = 0;
+                PanicCooldown();
+                break;
+            case Objects.ObjectType.Fallable:
+                fearMeter += 2;
+                panicAttack?.Invoke();
+                Debug.Log("Trigger Fear " + transform.ToString());
+                currentTimerPanic = 0;
+                PanicCooldown();
+                break;
+        }
+    }
+    public async void PanicCooldown()
+    {
+        while(currentTimerPanic < 15)
+        {
+            currentTimerPanic += Time.deltaTime;
+        }
+        isPanic = false;
+        await Task.Yield();
+    }
+    public void SetBusy(Transform target)
+    {
+        IsBusy = true;
+    }
+    public void IsFear()
+    {
+        EventManager.Instance.SetCurrentActionConditions(!isPanic);
+    }
 }

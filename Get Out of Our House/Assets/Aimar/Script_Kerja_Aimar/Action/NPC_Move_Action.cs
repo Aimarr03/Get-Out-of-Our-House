@@ -17,6 +17,7 @@ public class NPC_Move_Action : MonoBehaviour
     [SerializeField] private Transform TestingTargetLocation;
     #endregion
     private Queue<Environment_Door> transformList;
+    private bool isMovingByEvent;
     [SerializeField] private Vector3 targetLocation;
     [SerializeField] private Vector2 collisionSize;
     [SerializeField] private float movementSpeed;
@@ -25,11 +26,32 @@ public class NPC_Move_Action : MonoBehaviour
     public MoveAction moveAction;
     private void Awake()
     {
+        isMovingByEvent = false;
         npc = GetComponent<NPC>();
     }
     private void Start()
     {
         StartIdlingTheRoom();
+        npc.panicAttack += Npc_panicAttack;
+    }
+
+    private void Npc_panicAttack()
+    {
+        isMovingByEvent = true;
+        StopAllCoroutines();
+        npc.GetAnimator().SetFloat("IsMoving", -1);
+        Room room = npc.GetRoom();
+        Environment_Door door = room.GetRandomDoors();
+        StartCoroutine(PanicAction(door.transform.position));
+    }
+    private IEnumerator PanicAction(Vector3 targetPosition)
+    {
+        yield return new WaitForSeconds(1.3f);
+        Debug.Log("Going Ham and want to leave the room");
+        yield return StartCoroutine(SetTargetLocation(targetPosition));
+        Debug.Log("Start Idling");
+        StartIdlingTheRoom();
+        isMovingByEvent = false;
     }
     private IEnumerator MoveAction()
     {
@@ -43,6 +65,8 @@ public class NPC_Move_Action : MonoBehaviour
     }
     private void DetectionBox()
     {
+        Debug.Log(npc +" is Detecting with panic status " +npc.isPanic);
+        if (!isMovingByEvent) return;
         Collider2D[] collisionObject = Physics2D.OverlapBoxAll(transform.position, collisionSize, 0);
         foreach (Collider2D currentObject in collisionObject)
         {
@@ -77,6 +101,7 @@ public class NPC_Move_Action : MonoBehaviour
     }
     private IEnumerator MoveActionCoroutine()
     {
+        Debug.Log(npc + " Moving");
         while (Vector3.Distance(targetLocation, transform.position) > 0.15f)
         {
             npc.GetAnimator().SetFloat("IsMoving", 1);
@@ -92,7 +117,8 @@ public class NPC_Move_Action : MonoBehaviour
         //Debug.Log("Moving Towards");
         Vector3 currentPosition = transform.position;
         npc.FlippingSprite(targetLocation);
-        transform.position = Vector3.MoveTowards(currentPosition, targetLocation, movementSpeed * Time.deltaTime);
+        float movementSpeedModifed = npc.isPanic ? movementSpeed * 2 : movementSpeed;
+        transform.position = Vector3.MoveTowards(currentPosition, targetLocation, movementSpeedModifed * Time.deltaTime);
     }
     public void StartIdlingTheRoom()
     {
@@ -114,6 +140,7 @@ public class NPC_Move_Action : MonoBehaviour
     {
         if(transformList.Count > 0)
         {
+            isMovingByEvent = true;
             Environment_Door newTarget = transformList.Dequeue();
             Debug.Log("List " + transformList.Count);
             Debug.Log("NPC " + npc + " going to " + newTarget.transform.position);
@@ -122,6 +149,7 @@ public class NPC_Move_Action : MonoBehaviour
         }
         else
         {
+            isMovingByEvent = false;
             Debug.Log("Done");
             Done();
         }
