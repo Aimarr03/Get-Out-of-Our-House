@@ -1,3 +1,4 @@
+using DialogueEditor;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Animations;
@@ -6,6 +7,7 @@ using UnityEngine.Windows.Speech;
 
 public class Posessed : MonoBehaviour
 {
+    public NPCConversation npcConversation;
     public RuntimeAnimatorController controller;
     public bool isPosessed;
     private GameObject knive;
@@ -33,7 +35,7 @@ public class Posessed : MonoBehaviour
             {
                 if (targetNPC.type == NPC.NPC_Type.Child) continue;
                 Debug.Log("Killed " + targetNPC.type);
-                LevelManager.instance.EndGame("Tragedy");
+                
             }
         }
     }

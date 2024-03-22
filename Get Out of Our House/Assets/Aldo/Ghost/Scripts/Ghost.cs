@@ -1,3 +1,4 @@
+using DialogueEditor;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -45,10 +46,19 @@ public class Ghost : MonoBehaviour
         //currentRoom.PlayParticleSystem(true);
         PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
         PlayerControllerManager.instance.InvokeUltimate += Instance_InvokeUltimate;
-        DialogueManager.instance.beginDialogue += Instance_beginDialogue;
-        DialogueManager.instance.endDialogue += Instance_endDialogue;
+        ConversationManager.OnConversationStarted += Begin_Conversation;
+        ConversationManager.OnConversationEnded += End_Conversation;
     }
-
+    private void Begin_Conversation()
+    {
+        PlayerControllerManager.instance.InvokeInterract -= Instance_InvokeInterract;
+        canMove = false;
+    }
+    private void End_Conversation()
+    {
+        PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
+        canMove = true;
+    }
     private void Instance_InvokeUltimate()
     {
         if (UltimateMoveAccumulation < UltimateMoveLimit) return;
@@ -71,19 +81,6 @@ public class Ghost : MonoBehaviour
         spriteRenderer.color = Color.white;
         GhostPowerEffect.gameObject.SetActive(false);
     }
-
-    private void Instance_endDialogue()
-    {
-        PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
-        canMove = true;
-    }
-
-    private void Instance_beginDialogue()
-    {
-        PlayerControllerManager.instance.InvokeInterract -= Instance_InvokeInterract;
-        canMove= false;
-    }
-
     private void Instance_InvokeInterract()
     {
         Debug.Log("Invoke Interract");

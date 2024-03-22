@@ -1,3 +1,4 @@
+using DialogueEditor;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -22,12 +23,9 @@ public class NPC_Move_Action : MonoBehaviour
     [SerializeField] private Vector3 targetLocation;
     [SerializeField] private Vector2 collisionSize;
     [SerializeField] private float movementSpeed;
-    private int maxBounds = 3;
-    private int currentBounds;
     private NPC npc;
     public MoveAction moveAction;
     public int duration;
-    private Coroutine currentCoroutine;
     private void Awake()
     {
         isMovingByEvent = false;
@@ -46,7 +44,7 @@ public class NPC_Move_Action : MonoBehaviour
         Vector3 targPosition = new Vector3(position, transform.position.y, 0);
         npc.GetAnimator().SetFloat("IsMoving", -1);
         StopAllCoroutines();
-        currentCoroutine = StartCoroutine(InterractAction(targPosition));
+        StartCoroutine(InterractAction(targPosition));
     }
     private IEnumerator InterractAction(Vector3 targetPosition)
     {
@@ -117,7 +115,7 @@ public class NPC_Move_Action : MonoBehaviour
         Debug.Log(npc + " Moving");
         while (Vector3.Distance(targetLocation, transform.position) > 0.15f)
         {
-            if (DialogueManager.instance.isActive) continue;
+            if (ConversationManager.Instance.IsConversationActive) continue;
             npc.GetAnimator().SetFloat("IsMoving", 1);
             MovingTowards();
             yield return null;

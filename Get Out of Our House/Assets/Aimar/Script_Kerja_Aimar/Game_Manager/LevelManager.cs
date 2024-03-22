@@ -1,3 +1,4 @@
+using DialogueEditor;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ public class LevelManager : MonoBehaviour
     }
     private void Start()
     {
-        DialogueManager.instance.endDialogue += Instance_endDialogue;
+        //EndGame("Tragedy");
     }
 
     private void Instance_endDialogue()
@@ -25,11 +26,17 @@ public class LevelManager : MonoBehaviour
         throw new System.NotImplementedException();
     }
 
-    public async void EndGame(string dialogue)
+    public void EndGame(NPCConversation dialogue)
     {
         hasEnded = true;
         backgroundImage.enabled = true;
-        await Task.Delay(1000);
-        DialogueManager.instance.AssignDialogue(dialogue);
+        StartCoroutine(Delay(dialogue));
+    }
+    private IEnumerator Delay(NPCConversation npcConversation)
+    {
+        Debug.Log("Delay");
+        yield return new WaitForSeconds(1.1f);
+        Debug.Log("assigned Dialouge");
+        ConversationManager.Instance.StartConversation(npcConversation);
     }
 }

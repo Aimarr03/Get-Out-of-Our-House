@@ -2,12 +2,12 @@ using UnityEngine;
 using System;
 using System.Diagnostics;
 using UnityEngine.Events;
+using DialogueEditor;
 
 [Serializable]
 public class DialogueAction : EventAction
 {
-    public UnityEvent PreExecuteDialogueCondition;
-    public string dialogueName;
+    public NPCConversation npcConversation;
     public int timer;
     public override int GetTimerEvent()
     {

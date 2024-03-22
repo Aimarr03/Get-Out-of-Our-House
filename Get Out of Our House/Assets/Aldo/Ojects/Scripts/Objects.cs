@@ -1,3 +1,4 @@
+using DialogueEditor;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ public class Objects : MonoBehaviour, I_InterractableVisual
         Openable,
     }
     [SerializeField] Sprite spriteOpen;
-    [SerializeField] private string dialogueName;
+    [SerializeField] private NPCConversation dialogueName;
     public Room room;
     public bool isPosessed = false;
     public bool canPosessed = true;
@@ -73,7 +74,7 @@ public class Objects : MonoBehaviour, I_InterractableVisual
             case ObjectType.Openable:
                 if (isOpen)
                 {
-                    DialogueManager.instance.AssignDialogue(dialogueName);
+                    ConversationManager.Instance.StartConversation(dialogueName);
                     isOpen = false;
                     canPosessed = false;
                 }

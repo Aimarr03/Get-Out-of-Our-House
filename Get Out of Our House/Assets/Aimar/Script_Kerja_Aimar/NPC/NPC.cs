@@ -42,7 +42,7 @@ public class NPC : MonoBehaviour
         isPanic = false;
         fearMeter = 0;
         moveAction = GetComponent<NPC_Move_Action>();
-        
+        SubscribeToRoom(currentRoom);
         TimeManager.instance.OneSecondIntervalEventAction += Instance_OneSecondIntervalEventAction;
     }
     private void Start()
@@ -87,8 +87,7 @@ public class NPC : MonoBehaviour
     {
         if(hasDialogue)
         {
-            dialogueAction.PreExecuteDialogueCondition?.Invoke();
-            if (dialogueAction.AllConditionMet) DialogueManager.instance.AssignDialogue(dialogueAction.dialogueName);
+            ConversationManager.Instance.StartConversation(dialogueAction.npcConversation);
             dialogueAction = null;
         }
     }
@@ -117,7 +116,11 @@ public class NPC : MonoBehaviour
     public void SubscribeToRoom(Room room) => room.playerEnterRoom += ExecuteDialogue;
     public void DesubscribeToRoom(Room room) => room.playerEnterRoom -= ExecuteDialogue;
     public NPC_Move_Action GetMoveAction() => moveAction;
-    public void SetDialogueAction(DialogueAction dialogueAction) => this.dialogueAction = dialogueAction;
+    public void SetDialogueAction(DialogueAction dialogueAction)
+    {
+        this.dialogueAction = dialogueAction;
+        hasDialogue = true;
+    }
     public void TestingMakeFalse() => EventManager.Instance.SetCurrentActionConditions(false);
     public int GetFear() => fearMeter;
     

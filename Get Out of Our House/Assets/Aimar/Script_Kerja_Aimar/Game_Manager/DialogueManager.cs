@@ -13,13 +13,13 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI nameContent;
 
     [SerializeField] GameObject dialogueHolder;
-
     public static DialogueManager instance;
 
     private void Awake()
     {
         if (instance != null) return;
         instance = this;
+        //VD.LoadDialogues();
         isActive = false;
         
     }

@@ -1,3 +1,4 @@
+using DialogueEditor;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -32,6 +33,8 @@ public class PosessPerson : MonoBehaviour
                 npc.GetAnimator().GetComponent<SpriteRenderer>().color = new Color(210, 130, 130);
                 Posessed posessed = targetPosess.GetComponent<Posessed>();
                 posessed.isPosessed = true;
+                Debug.Log("launching conversation");
+                ConversationManager.Instance.StartConversation(posessed.npcConversation);
                 
                 ghost.SetInvisibility(true);
                 ghost.npcPosessed = npc;
