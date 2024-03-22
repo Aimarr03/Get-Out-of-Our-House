@@ -2,6 +2,7 @@ using DialogueEditor;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -15,6 +16,7 @@ public class NPC : MonoBehaviour
     }
     public NPC_Type type;
     public bool isVunerable;
+    [SerializeField] private Animator posessedAnimator;
     [SerializeField] private Room currentRoom;
     [SerializeField] private Animator animator;
     [SerializeField] private DialogueAction dialogueAction;
@@ -24,6 +26,7 @@ public class NPC : MonoBehaviour
     public int fearMeter;
     public bool IsBusy;
     public bool isPanic;
+    public bool isPosessed;
     public event Action panicAttack;
     public float currentTimerPanic;
     public bool hasDialogue;
@@ -48,28 +51,29 @@ public class NPC : MonoBehaviour
     }
     private void Instance_OneSecondIntervalEventAction(int currentimer)
     {
-        if(dialogueAction != null) DialogueCheckCondition();
+        if(hasDialogue) DialogueCheckCondition();
         if (IsBusy) CheckInterraction();
     }
     private void CheckInterraction()
     {
-        /*interractionAction.duration--;
-        if(interractionAction.duration <= 0)
+        behaviourAction.duration--;
+        if(behaviourAction.duration <= 0)
         {
             ClearInterraction();
-        }*/
+        }
     }
     private void ClearInterraction()
     {
-        /*Debug.Log(gameObject + "interraction finish");
-        interractionAction = null;
+        Debug.Log(gameObject + "interraction finish");
+        behaviourAction = null;
         IsBusy = false;
         animator.SetBool("IsBusy", false);
         moveAction.StartIdlingTheRoom();
         if(type == NPC_Type.Child)
         {
+            SetVunerable();
             showerParticle.Stop();
-        }*/
+        }
     }
     private void DialogueCheckCondition()
     {
@@ -81,8 +85,7 @@ public class NPC : MonoBehaviour
     }
     private void ExecuteDialogue()
     {
-        Debug.Log(dialogueAction == null);
-        if(dialogueAction != null)
+        if(hasDialogue)
         {
             dialogueAction.PreExecuteDialogueCondition?.Invoke();
             if (dialogueAction.AllConditionMet) DialogueManager.instance.AssignDialogue(dialogueAction.dialogueName);
@@ -115,6 +118,7 @@ public class NPC : MonoBehaviour
     public NPC_Move_Action GetMoveAction() => moveAction;
     public void SetDialogueAction(DialogueAction dialogueAction) => this.dialogueAction = dialogueAction;
     public void TestingMakeFalse() => EventManager.Instance.SetCurrentActionConditions(false);
+    public int GetFear() => fearMeter;
     
     public void TriggerFear(Objects.ObjectType objectType, Objects prop)
     {
@@ -141,11 +145,12 @@ public class NPC : MonoBehaviour
     }
     public async void PanicCooldown()
     {
-        while(currentTimerPanic < 15)
+        while(currentTimerPanic < 5)
         {
             currentTimerPanic += Time.deltaTime;
         }
         isPanic = false;
+        moveAction.SetFreeRoaming();
         await Task.Yield();
     }
     public void SetBusy(Transform target)
@@ -166,8 +171,14 @@ public class NPC : MonoBehaviour
     }
     public void CheckFearExceed(int parameter)
     {
+        Debug.Log("Fear exceeded? " + (fearMeter >= parameter));
         EventManager.Instance.SetCurrentActionConditions(fearMeter >= parameter);
     }
+    public void isPossess()
+    {
+        EventManager.Instance.SetCurrentActionConditions(!isPosessed);
+    }
+
     public void SetVunerable()
     {
         Debug.Log(gameObject + " is now vunerable");

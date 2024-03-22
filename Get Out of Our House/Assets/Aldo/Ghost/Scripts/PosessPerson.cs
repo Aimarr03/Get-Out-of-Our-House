@@ -22,11 +22,16 @@ public class PosessPerson : MonoBehaviour
             UltimateAction(ghost, gameObject);
             return;
         }
-        else if(gameObject.TryGetComponent<FearMeter>(out FearMeter fearmeter))
+        else if(gameObject.TryGetComponent<NPC>(out NPC npc))
         {
-            if(fearmeter.fearMeter >= 5)
+            if(npc.fearMeter >= 3 && npc.type == NPC.NPC_Type.Child)
             {
+                npc.GetMoveAction().StopAllCoroutines();
+                npc.isPosessed = true;
+                npc.GetAnimator().SetFloat("IsMoving", -1);
                 targetPosess.GetComponent<Posessed>().isPosessed = true;
+                ghost.SetInvisibility(true);
+                ghost.npcPosessed = npc;
                 Ghost.isPosessingPerson = true;
             }
         }

@@ -10,16 +10,16 @@ public class Posessed : MonoBehaviour
     public bool isHoldingKnive;
     [SerializeField] private Rigidbody2D rb;
     private float speed = 6;
-
+    private NPC npc;
     // Start is called before the first frame update
     void Start()
     {
-
+        npc = GetComponent<NPC>();
         rb = GetComponent<Rigidbody2D>();
-        PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
+        PlayerControllerManager.instance.InvokeAction1 += Instance_InvokeAction;
     }
 
-    void Instance_InvokeInterract()
+    void Instance_InvokeAction()
     {
         if (knive == null) return;
         Debug.Log("Mengambil Knive");
@@ -35,32 +35,28 @@ public class Posessed : MonoBehaviour
         {
             moving();
         }
-        if (isPosessed)
-        { 
-            GetComponent<SpriteRenderer>().color = Color.blue;
-        }
     }
 
     void moving()
     {
         if (!isPosessed) return;
         Vector2 inputMovement = PlayerControllerManager.instance.GetVector2Input();
+        if (inputMovement != Vector2.zero)
+        {
+            npc.GetAnimator().SetFloat("IsMoving", 1);
+        }
+        else
+        {
+            npc.GetAnimator().SetFloat("IsMoving", -1);
+        }
         rb.velocity = new Vector2(inputMovement.x * speed, 0);
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            speed = 12;
-        }
-        if (Input.GetKeyUp(KeyCode.LeftShift))
-        {
-            speed = 6;
-        }
         if (inputMovement.x < 0)
         {
-            transform.localScale = new Vector2(2, transform.localScale.y);
+            transform.rotation = Quaternion.Euler(0, 0, 0);
         }
         if (inputMovement.x > 0)
         {
-            transform.localScale = new Vector2(-2, transform.localScale.y);
+            transform.rotation = Quaternion.Euler(0, 180, 0);
         }
     }
     void OnTriggerEnter2D(Collider2D other)

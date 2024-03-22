@@ -8,13 +8,17 @@ public class Objects : MonoBehaviour, I_InterractableVisual
     public enum ObjectType
     {
         Lightable,
-        Fallable
+        Fallable,
+        Openable,
     }
+    [SerializeField] Sprite spriteOpen;
+    [SerializeField] private string dialogueName;
     public Room room;
     public bool isPosessed = false;
     public bool canPosessed = true;
     public bool canShake = true;
     public bool canDrop = false;
+    public bool isOpen = false;
     private GameObject targetPeople;
     private Ghost ghost;
     private SpriteRenderer interractedVisual;
@@ -58,8 +62,23 @@ public class Objects : MonoBehaviour, I_InterractableVisual
                 StartCoroutine(Shaking());
                 AttemptFearGhostBuster();
                 break;
+            case ObjectType.Openable:
+                if (isOpen)
+                {
+                    DialogueManager.instance.AssignDialogue(dialogueName);
+                    isOpen = false;
+                    canPosessed = false;
+                }
+                
+                break;
         }
         
+    }
+    public void SetOpen()
+    {
+        Debug.Log(gameObject + " is now open");
+        isOpen = true;
+        interractedVisual.enabled = false;
     }
     private void AttemptFearGhostBuster()
     {

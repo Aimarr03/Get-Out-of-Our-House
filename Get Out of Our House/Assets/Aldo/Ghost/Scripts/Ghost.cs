@@ -20,6 +20,7 @@ public class Ghost : MonoBehaviour
     public static bool isPosessingObject;
     public static bool isPosessingPerson;
     public static bool isPosessing;
+    public NPC npcPosessed;
     [SerializeField] private Vector2 boxSize;
     [SerializeField] private Room currentRoom;
     [SerializeField] private LayerMask visible;
@@ -137,6 +138,17 @@ public class Ghost : MonoBehaviour
                 //Debug.Log(collider.ToString() + (collider.CompareTag("Floor") || collider.CompareTag("People") || collider.CompareTag("Player")));
                 if (collider.CompareTag("Floor") || collider.CompareTag("People") || collider.CompareTag("Player")) continue;
                 if (IsUltimateForm && !collider.CompareTag("PeopleInside")) continue;
+                if (collider.TryGetComponent<NPC>(out NPC npc))
+                {
+                    if (isPosessing) continue;
+                    if (npc.fearMeter < 3) return;
+                    else
+                    {
+                        nearestCollider = collider;
+                        currentGameObject = nearestCollider.gameObject;
+                        return;
+                    }
+                }
                 Vector3 colliderPosition = collider.transform.position;
                 if (collider.CompareTag("PeopleInside"))
                 {

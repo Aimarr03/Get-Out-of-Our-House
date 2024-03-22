@@ -41,7 +41,10 @@ public class Environment_Door : MonoBehaviour, I_InterractableVisual
         
         ghost.SetCurrentRoom(nextDoor.room);
         room.RemoveCharacter(ghost.gameObject);
-        
+        if (Ghost.isPosessing)
+        {
+            InterractDoor(ghost.npcPosessed);
+        }
         nextDoor.room.AddCharacter(ghost.gameObject);
         nextDoor.room.PlayParticleSystem(true);
 

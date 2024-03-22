@@ -12,6 +12,7 @@ public class PossesingObject : MonoBehaviour
     }
     public void Instance_InvokeInterract(Ghost ghost, GameObject gameObject)
     {
+        if (Ghost.isPosessingPerson) return;
         if (ghost != null)
         {
             otherObject = gameObject;
@@ -46,6 +47,7 @@ public class PossesingObject : MonoBehaviour
         {
             ReadyPossessObject();
         }*/
+        if (Ghost.isPosessingPerson) return;
         if (Ghost.isPosessingObject)
         {
             transform.position = otherObject.transform.position;

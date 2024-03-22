@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -51,16 +52,16 @@ public class EventManager : MonoBehaviour
             EventAction peekEvent = queue.Peek(); // Peek instead of Dequeue
             if (peekEvent.timerEvent == timerEvent)
             {
-                currentEventAction = peekEvent;
+                currentEventAction = queue.Dequeue();
                 currentEventAction.CheckConditionsRequired?.Invoke();
-                if (peekEvent.AllConditionMet)
+                if (currentEventAction.AllConditionMet)
                 {
-                    peekEvent.InvokeAction();
-                    queue.Dequeue(); // Dequeue only if action is invoked
+                    currentEventAction.InvokeAction();
                 }
             }
         }
     }
+    
     private Queue<EventAction> CombinesQueue(Queue<EventAction> queue01, Queue<EventAction> queue02)
     {
         Queue<EventAction> combinedQueue = new Queue<EventAction>();

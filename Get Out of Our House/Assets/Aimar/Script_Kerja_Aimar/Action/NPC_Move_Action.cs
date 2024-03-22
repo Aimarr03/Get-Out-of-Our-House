@@ -21,7 +21,8 @@ public class NPC_Move_Action : MonoBehaviour
     [SerializeField] private Vector3 targetLocation;
     [SerializeField] private Vector2 collisionSize;
     [SerializeField] private float movementSpeed;
-    
+    private int maxBounds = 3;
+    private int currentBounds;
     private NPC npc;
     public MoveAction moveAction;
     public int duration;
@@ -71,16 +72,6 @@ public class NPC_Move_Action : MonoBehaviour
         yield return StartCoroutine(SetTargetLocation(targetPosition));
         Debug.Log("Start Idling");
         StartIdlingTheRoom();
-    }
-    private IEnumerator MoveAction()
-    {
-        Debug.Log(Vector3.Distance(targetLocation, transform.position));
-        while(Vector3.Distance(targetLocation, transform.position) > 0.15f)
-        {
-            MovingTowards();
-            yield return null;
-        }
-        DetectionBox();
     }
     private void DetectionBox()
     {
