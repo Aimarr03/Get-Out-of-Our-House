@@ -7,7 +7,7 @@ using DialogueEditor;
 [Serializable]
 public class DialogueAction : EventAction
 {
-    public NPCConversation npcConversation;
+    public DialogueScriptableObject npcConversation;
     public int timer;
     public override int GetTimerEvent()
     {

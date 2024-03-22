@@ -87,7 +87,7 @@ public class NPC : MonoBehaviour
     {
         if(hasDialogue)
         {
-            ConversationManager.Instance.StartConversation(dialogueAction.npcConversation);
+            //DialogueManager.instance.AssignDialogue(dialogueAction.npcConversation);
             dialogueAction = null;
         }
     }

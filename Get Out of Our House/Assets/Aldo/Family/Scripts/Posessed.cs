@@ -7,7 +7,7 @@ using UnityEngine.Windows.Speech;
 
 public class Posessed : MonoBehaviour
 {
-    public NPCConversation npcConversation;
+    public DialogueScriptableObject npcConversation;
     public RuntimeAnimatorController controller;
     public bool isPosessed;
     private GameObject knive;
