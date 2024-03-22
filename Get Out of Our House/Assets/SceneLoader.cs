@@ -5,9 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
-    public void Start()
+    public static void LoadScene(int sceneToLoad)
     {
-        //SceneManager.LoadScene("Main Map");
+        SceneManager.LoadScene(sceneToLoad, LoadSceneMode.Single);
     }
 
     public void Exit()
