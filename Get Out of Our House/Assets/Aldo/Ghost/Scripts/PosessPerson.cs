@@ -1,3 +1,4 @@
+using DialogueEditor;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -22,11 +23,21 @@ public class PosessPerson : MonoBehaviour
             UltimateAction(ghost, gameObject);
             return;
         }
-        else if(gameObject.TryGetComponent<FearMeter>(out FearMeter fearmeter))
+        else if(gameObject.TryGetComponent<NPC>(out NPC npc))
         {
-            if(fearmeter.fearMeter >= 5)
+            if(npc.fearMeter >= 3 && npc.type == NPC.NPC_Type.Child)
             {
-                targetPosess.GetComponent<Posessed>().isPosessed = true;
+                npc.GetMoveAction().StopAllCoroutines();
+                npc.isPosessed = true;
+                npc.GetAnimator().SetFloat("IsMoving", -1);
+                npc.GetAnimator().GetComponent<SpriteRenderer>().color = new Color(210, 130, 130);
+                Posessed posessed = targetPosess.GetComponent<Posessed>();
+                posessed.isPosessed = true;
+                Debug.Log("launching conversation");
+                DialogueManager.instance.AssignDialogue(posessed.npcConversation);
+                
+                ghost.SetInvisibility(true);
+                ghost.npcPosessed = npc;
                 Ghost.isPosessingPerson = true;
             }
         }

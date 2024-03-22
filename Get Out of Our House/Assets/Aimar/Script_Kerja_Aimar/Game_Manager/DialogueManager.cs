@@ -6,19 +6,24 @@ using VIDE_Data;
 
 public class DialogueManager : MonoBehaviour
 {
+    public bool isActive;
     public event Action beginDialogue;
     public event Action endDialogue;
+    public DialogueScriptableObject currentDialogue;
     [SerializeField] private TextMeshProUGUI dialogueContent;
     [SerializeField] private TextMeshProUGUI nameContent;
-
+    
     [SerializeField] GameObject dialogueHolder;
-
     public static DialogueManager instance;
+    private int currentLine;
+    private int currentSegment;
 
     private void Awake()
     {
         if (instance != null) return;
         instance = this;
+        //VD.LoadDialogues();
+        isActive = false;
         
     }
     private void Start()
@@ -29,6 +34,7 @@ public class DialogueManager : MonoBehaviour
     }
     private void OnDialogueStop()
     {
+        isActive = false;
         dialogueContent.text = "";
         nameContent.text = "";
         dialogueHolder.SetActive(false);
@@ -37,54 +43,48 @@ public class DialogueManager : MonoBehaviour
     }
     private void OnDialogueStart()
     {
+        isActive = true;
         beginDialogue?.Invoke();
         PlayerControllerManager.instance.InvokeInterract += OnInterractDialogue;
         dialogueContent.text = "";
         nameContent.text = "";
+        currentLine = 0;
         dialogueHolder.SetActive(true);
+        OnInterractDialogue();
     }
-    public void AssignDialogue(string dialogueName)
+    public void AssignDialogue(DialogueScriptableObject dialogueName)
     {
+        currentDialogue = dialogueName;
         OnDialogueStart();
-        VD.OnNodeChange += ChangeDialogueNodeAction;
-        VD.OnEnd += EndDialogue;
-        VD.BeginDialogue(dialogueName);
-    }
-    private void ChangeDialogueNodeAction(VD.NodeData nodeData)
-    {
-        StartCoroutine(ShowDialogueContent());
-    }
-    private void EndDialogue(VD.NodeData nodeData)
-    {
-        OnDialogueStop();
-        VD.OnNodeChange -= ChangeDialogueNodeAction;
-        VD.OnEnd -= EndDialogue;
     }
     private void OnInterractDialogue()
     {
-        if(dialogueContent.text == VD.nodeData.comments[VD.nodeData.commentIndex])
+        if(currentLine < currentDialogue.entireDialogue.Count)
         {
-            VD.Next();
-        }
-        StartCoroutine(ShowDialogueContent());
-    }
-    private IEnumerator ShowDialogueContent()
-    {
-        if (dialogueContent.text != VD.nodeData.comments[VD.nodeData.commentIndex])
-        {
-            string text = string.Empty;
-            dialogueContent.text = text;
-            nameContent.text = VD.nodeData.tag;
-            while (text.Length < VD.nodeData.comments[VD.nodeData.commentIndex].Length)
-            {
-                text += VD.nodeData.comments[VD.nodeData.commentIndex][text.Length];
-                dialogueContent.text = text;
-                yield return new WaitForSeconds(0.01f);
-            }
+            StopAllCoroutines();
+            StartCoroutine(DisplayDialogue());
+            currentLine++;
         }
         else
         {
-            dialogueContent.text = VD.nodeData.comments[VD.nodeData.commentIndex];
+            OnDialogueStop();
         }
+        
+    }
+    private IEnumerator DisplayDialogue()
+    {
+        string text = currentDialogue.entireDialogue[currentLine].comment;
+        string name = currentDialogue.entireDialogue[currentLine].name;
+        nameContent.text = name;
+        string currentText = "";
+        int index = 0;
+        while (currentText != text)
+        {
+            currentText += text[index];
+            dialogueContent.text = currentText;
+            index++;
+            yield return new WaitForSeconds(0.07f);
+        }
+        
     }
 }

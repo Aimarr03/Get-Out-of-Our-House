@@ -1,8 +1,10 @@
+using DialogueEditor;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using static GhostBuster;
+using static NPC;
 
 public class NPC_Move_Action : MonoBehaviour
 {
@@ -17,32 +19,65 @@ public class NPC_Move_Action : MonoBehaviour
     [SerializeField] private Transform TestingTargetLocation;
     #endregion
     private Queue<Environment_Door> transformList;
+    private bool isMovingByEvent;
     [SerializeField] private Vector3 targetLocation;
     [SerializeField] private Vector2 collisionSize;
     [SerializeField] private float movementSpeed;
-    
     private NPC npc;
     public MoveAction moveAction;
+    public int duration;
     private void Awake()
     {
+        isMovingByEvent = false;
         npc = GetComponent<NPC>();
     }
     private void Start()
     {
         StartIdlingTheRoom();
+        npc.panicAttack += Npc_panicAttack;
     }
-    private IEnumerator MoveAction()
+
+    public void SetInterract(float position)
     {
-        Debug.Log(Vector3.Distance(targetLocation, transform.position));
-        while(Vector3.Distance(targetLocation, transform.position) > 0.15f)
+        Debug.Log("Preparing to Interract");
+        isMovingByEvent = false;
+        Vector3 targPosition = new Vector3(position, transform.position.y, 0);
+        npc.GetAnimator().SetFloat("IsMoving", -1);
+        StopAllCoroutines();
+        StartCoroutine(InterractAction(targPosition));
+    }
+    private IEnumerator InterractAction(Vector3 targetPosition)
+    {
+        Debug.Log(npc + " going to " + targetPosition);
+        yield return SetTargetLocation(targetPosition);
+        Debug.Log(npc + " is Busy doing their activity");
+        npc.GetAnimator().SetBool("IsBusy", true);
+        if(npc.type == NPC.NPC_Type.Child)
         {
-            MovingTowards();
-            yield return null;
+            npc.showerParticle.Play();
         }
-        DetectionBox();
+    }
+    private void Npc_panicAttack()
+    {
+        isMovingByEvent = true;
+        StopAllCoroutines();
+        npc.GetAnimator().SetFloat("IsMoving", -1);
+        Room room = npc.GetRoom();
+        Environment_Door door = room.GetRandomDoors();
+        StartCoroutine(PanicAction(door.transform.position));
+    }
+    private IEnumerator PanicAction(Vector3 targetPosition)
+    {
+        yield return new WaitForSeconds(1.3f);
+        Debug.Log("Going Ham and want to leave the room");
+        yield return StartCoroutine(SetTargetLocation(targetPosition));
+        Debug.Log("Start Idling");
+        StartIdlingTheRoom();
     }
     private void DetectionBox()
     {
+        //Debug.Log(npc +" is Detecting with panic status " +npc.isPanic);
+        if (!isMovingByEvent) return;
         Collider2D[] collisionObject = Physics2D.OverlapBoxAll(transform.position, collisionSize, 0);
         foreach (Collider2D currentObject in collisionObject)
         {
@@ -77,8 +112,10 @@ public class NPC_Move_Action : MonoBehaviour
     }
     private IEnumerator MoveActionCoroutine()
     {
+        Debug.Log(npc + " Moving");
         while (Vector3.Distance(targetLocation, transform.position) > 0.15f)
         {
+            if (ConversationManager.Instance.IsConversationActive) continue;
             npc.GetAnimator().SetFloat("IsMoving", 1);
             MovingTowards();
             yield return null;
@@ -86,18 +123,20 @@ public class NPC_Move_Action : MonoBehaviour
         DetectionBox();
         npc.GetAnimator().SetFloat("IsMoving", -1);
     }
-
+    
     public void MovingTowards()
     {
         //Debug.Log("Moving Towards");
         Vector3 currentPosition = transform.position;
         npc.FlippingSprite(targetLocation);
-        transform.position = Vector3.MoveTowards(currentPosition, targetLocation, movementSpeed * Time.deltaTime);
+        float movementSpeedModifed = npc.isPanic ? movementSpeed * 2 : movementSpeed;
+        transform.position = Vector3.MoveTowards(currentPosition, targetLocation, movementSpeedModifed * Time.deltaTime);
     }
     public void StartIdlingTheRoom()
     {
+        if (npc.type == NPC_Type.Child && npc.isPosessed) return;
         StopAllCoroutines();
-        Debug.Log("NPC Idling");
+        //Debug.Log("NPC Idling");
         Room room = npc.GetRoom();
         room.GetGroundHorizontalBound(out float minBound, out float maxBound);
         //StopCoroutine(SetTargetLocation(minBound, maxBound));
@@ -105,6 +144,7 @@ public class NPC_Move_Action : MonoBehaviour
     }
     public void SetMoveAction(MoveAction moveAction)
     {
+        if (npc.type == NPC_Type.Child && npc.isPosessed) return;
         this.moveAction = moveAction;
         StopAllCoroutines();
         transformList = new Queue<Environment_Door>(moveAction.DestinationLocation);
@@ -114,14 +154,16 @@ public class NPC_Move_Action : MonoBehaviour
     {
         if(transformList.Count > 0)
         {
+            isMovingByEvent = true;
             Environment_Door newTarget = transformList.Dequeue();
-            Debug.Log("List " + transformList.Count);
+            //Debug.Log("List " + transformList.Count);
             Debug.Log("NPC " + npc + " going to " + newTarget.transform.position);
             yield return SetTargetLocation(newTarget.transform.position);
             StartCoroutine(StartMoveAction());
         }
         else
         {
+            isMovingByEvent = false;
             Debug.Log("Done");
             Done();
         }
@@ -130,5 +172,11 @@ public class NPC_Move_Action : MonoBehaviour
     {
         moveAction = null;
         StartIdlingTheRoom();
+    }
+    public void SetFreeRoaming()
+    {
+        isMovingByEvent = true;
+        Debug.Log(npc + " is Set Free Roaming");
+        Npc_panicAttack();
     }
 }

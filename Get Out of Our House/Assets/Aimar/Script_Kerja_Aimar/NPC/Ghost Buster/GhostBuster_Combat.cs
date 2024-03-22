@@ -53,6 +53,7 @@ public class GhostBuster_Combat : MonoBehaviour
 
     private void Update()
     {
+        if (ghostBuster.Insane) return;
         switch (currentState)
         {
             case CombatState.Non:

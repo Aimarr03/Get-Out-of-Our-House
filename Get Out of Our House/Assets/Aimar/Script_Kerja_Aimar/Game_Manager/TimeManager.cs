@@ -1,3 +1,4 @@
+using DialogueEditor;
 using System;
 using UnityEngine;
 
@@ -62,6 +63,8 @@ public class TimeManager : MonoBehaviour
     }
     private void Update()
     {
+        if (LevelManager.instance.hasEnded) return;
+        if (ConversationManager.Instance.IsConversationActive) return;
         currentTime += Time.deltaTime;
         TestingRealTime += Time.deltaTime;
         //This approach is to make sure that the time one second is recorded
@@ -91,5 +94,9 @@ public class TimeManager : MonoBehaviour
         timerEvent++;
         OneSecondIntervalEventAction?.Invoke(timerEvent);
         OneSecondIntervalEventUI?.Invoke(new TimeData(hour,minute,timeState));
+    }
+    public int GetTimerEvent()
+    {
+        return timerEvent;
     }
 }

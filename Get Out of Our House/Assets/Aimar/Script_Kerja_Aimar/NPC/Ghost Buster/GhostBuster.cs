@@ -1,3 +1,4 @@
+using DialogueEditor;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ public class GhostBuster : MonoBehaviour,I_InterractableVisual
         Right
     }
     public StateDirection currentDirection = StateDirection.Left;
+    public NPCConversation npcConversation;
     private int sanity;
     private bool isVunerable;
     private int sanityArmor;
@@ -132,6 +134,8 @@ public class GhostBuster : MonoBehaviour,I_InterractableVisual
                 Insane = true;
                 agitatedEffect.Stop();
                 ghostBusterAnimator.SetBool("Dead", true);
+                await Task.Delay(1200);
+                LevelManager.instance.EndGame(npcConversation);
             }
         }
         

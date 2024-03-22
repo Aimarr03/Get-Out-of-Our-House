@@ -12,6 +12,7 @@ public class PossesingObject : MonoBehaviour
     }
     public void Instance_InvokeInterract(Ghost ghost, GameObject gameObject)
     {
+        if (Ghost.isPosessingPerson) return;
         if (ghost != null)
         {
             otherObject = gameObject;
@@ -25,7 +26,10 @@ public class PossesingObject : MonoBehaviour
         {
             Debug.Log("Posessing Object");
             ghost.SetInvisibility(true);
-            otherObject.GetComponent<Objects>().isPosessed = true;
+            Objects objects = otherObject.GetComponent<Objects>();
+            objects.isPosessed = true;
+            objects.SetGhost(ghost);
+            objects.SetPossessObject();
             return;
         }
 
@@ -33,7 +37,10 @@ public class PossesingObject : MonoBehaviour
         {
             Debug.Log("Keluar dari Object");
             ghost.SetInvisibility(false);
-            otherObject.GetComponent<Objects>().isPosessed = false;
+            Objects objects = otherObject.GetComponent<Objects>();
+            objects.isPosessed = false;
+            objects.SetGhost(null);
+            objects.UnsetPosessedObject();
         }
     }
 
@@ -44,6 +51,7 @@ public class PossesingObject : MonoBehaviour
         {
             ReadyPossessObject();
         }*/
+        if (Ghost.isPosessingPerson) return;
         if (Ghost.isPosessingObject)
         {
             transform.position = otherObject.transform.position;

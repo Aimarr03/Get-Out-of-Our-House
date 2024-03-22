@@ -102,7 +102,7 @@ public class Room : MonoBehaviour
                 }
             }
         }
-        if (CheckCharacter(gameObject)) return;
+        //if (CheckCharacter(gameObject)) return;
         charactersInRoom.Add(gameObject);
     }
     public void RemoveCharacter(GameObject gameObject)
@@ -133,5 +133,6 @@ public class Room : MonoBehaviour
         }
         return null;
     }
+    public List<GameObject> GetPeople() => charactersInRoom;
     public bool CheckCharacter(GameObject gameObject) => charactersInRoom.Contains(gameObject);
 }

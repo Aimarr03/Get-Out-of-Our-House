@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -5,7 +6,7 @@ using UnityEngine;
 public class EventManager : MonoBehaviour
 {
     public static EventManager Instance;
-    [SerializeField] private Queue<EventAction> eventActions;
+    private List<Queue<EventAction>> allEvents;
     private EventAction currentEventAction;
 
     private void Awake()
@@ -16,44 +17,70 @@ public class EventManager : MonoBehaviour
 
     void Start()
     {
-        Queue<EventAction> moveActions = new Queue<EventAction>(DataEvents.instance._ListOfMoveAction);
+        Queue<EventAction> childmoveActions = new Queue<EventAction>(DataEvents.instance._ListOfChildMoveAction);
+        Queue<EventAction> dadmoveActions = new Queue<EventAction>(DataEvents.instance._ListOfDadMoveAction);
+        Queue<EventAction> mommoveActions = new Queue<EventAction>(DataEvents.instance._ListOfMomMoveAction);
         Queue<EventAction> dialogueActions = new Queue<EventAction>(DataEvents.instance._ListOfDialogueAction);
-        eventActions = CombinesQueue(moveActions, dialogueActions);
-        eventActions = new Queue<EventAction>(eventActions.OrderBy(ac => ac.timerEvent));
-        currentEventAction = eventActions.Dequeue();
+        Queue<EventAction> callActions = new Queue<EventAction> (DataEvents.instance._ListOfCallAction);
+        Queue<EventAction> behaviourActions = new Queue<EventAction>(DataEvents.instance._ListOfBehaviourAction);
+        
+        childmoveActions = new Queue<EventAction>(childmoveActions.OrderBy(ac => ac.timerEvent));
+        dadmoveActions= new Queue<EventAction>(dadmoveActions.OrderBy(ac => ac.timerEvent));
+        mommoveActions = new Queue<EventAction>(mommoveActions.OrderBy(ac => ac.timerEvent));
+        dialogueActions= new Queue<EventAction>(dialogueActions.OrderBy(ac => ac.timerEvent));
+        callActions = new Queue<EventAction>(callActions.OrderBy(ac => ac.timerEvent));
+        behaviourActions= new Queue<EventAction>(behaviourActions.OrderBy(ac => ac.timerEvent));
+
+        allEvents = new List<Queue<EventAction>>
+        {
+            childmoveActions,
+            dadmoveActions,
+            mommoveActions,
+            dialogueActions,
+            callActions,
+            behaviourActions
+        };
+
         TimeManager.instance.OneSecondIntervalEventAction += Instance_OneSecondIntervalEventAction;
     }
 
     private void Instance_OneSecondIntervalEventAction(int timerEvent)
     {
-        if(currentEventAction == null) return;
-        if(currentEventAction.timerEvent == timerEvent)
+        foreach(Queue<EventAction> queue in allEvents)
         {
-            currentEventAction.CheckConditionsRequired?.Invoke();
-            if (!currentEventAction.AllConditionMet) return;
-            currentEventAction.InvokeAction();
-            Debug.Log(currentEventAction);
-            if (eventActions.Count == 0) return;
-            currentEventAction = eventActions.Dequeue();
-            Instance_OneSecondIntervalEventAction(timerEvent);
+            if (queue.Count <= 0) continue;
+            EventAction peekEvent = queue.Peek(); // Peek instead of Dequeue
+            if (peekEvent.timerEvent == timerEvent)
+            {
+                currentEventAction = queue.Dequeue();
+                currentEventAction.CheckConditionsRequired?.Invoke();
+                if (currentEventAction.AllConditionMet)
+                {
+                    currentEventAction.InvokeAction();
+                }
+            }
         }
     }
-    private Queue<EventAction> CombinesQueue<EventAction>(Queue<EventAction> queue01, Queue<EventAction> queue02)
+    
+    private Queue<EventAction> CombinesQueue(Queue<EventAction> queue01, Queue<EventAction> queue02)
     {
         Queue<EventAction> combinedQueue = new Queue<EventAction>();
 
-        while(queue01.Count > 0 || queue02.Count > 0)
+        foreach (EventAction action in queue01)
         {
-            if(queue01.TryDequeue(out EventAction data01))
-            {
-                combinedQueue.Enqueue(data01);
-            }
-            if(queue02.TryDequeue(out EventAction data02))
-            {
-                combinedQueue.Enqueue(data02);
-            }
+            combinedQueue.Enqueue(action);
         }
+
+        foreach (EventAction action in queue02)
+        {
+            combinedQueue.Enqueue(action);
+        }
+
         return combinedQueue;
+    }
+    public EventAction GetCurrentAction()
+    {
+        return currentEventAction;
     }
     public void SetCurrentActionConditions(bool input)
     {

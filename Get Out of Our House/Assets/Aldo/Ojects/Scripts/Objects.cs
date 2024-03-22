@@ -1,3 +1,4 @@
+using DialogueEditor;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,13 +9,19 @@ public class Objects : MonoBehaviour, I_InterractableVisual
     public enum ObjectType
     {
         Lightable,
-        Fallable
+        Fallable,
+        Openable,
     }
+    [SerializeField] Sprite spriteOpen;
+    [SerializeField] private NPCConversation dialogueName;
+    public Room room;
     public bool isPosessed = false;
     public bool canPosessed = true;
     public bool canShake = true;
     public bool canDrop = false;
+    public bool isOpen = false;
     private GameObject targetPeople;
+    private Ghost ghost;
     private SpriteRenderer interractedVisual;
     [SerializeField] GameObject LightField;
 
@@ -33,10 +40,18 @@ public class Objects : MonoBehaviour, I_InterractableVisual
     {
         interractedVisual = GetComponent<SpriteRenderer>();
         InterractEffect(currentInterract);
+        
+    }
+    public void SetPossessObject()
+    {
         PlayerControllerManager.instance.InvokeAction1 += Instance_InvokeAction1;
         PlayerControllerManager.instance.InvokeAction2 += Instance_InvokeAction2;
     }
-
+    public void UnsetPosessedObject()
+    {
+        PlayerControllerManager.instance.InvokeAction1 -= Instance_InvokeAction1;
+        PlayerControllerManager.instance.InvokeAction2 -= Instance_InvokeAction2;
+    }
     // Update is called once per frame
     void Update()
     {
@@ -56,40 +71,58 @@ public class Objects : MonoBehaviour, I_InterractableVisual
                 StartCoroutine(Shaking());
                 AttemptFearGhostBuster();
                 break;
+            case ObjectType.Openable:
+                if (isOpen)
+                {
+                    ConversationManager.Instance.StartConversation(dialogueName);
+                    isOpen = false;
+                    canPosessed = false;
+                }
+                
+                break;
         }
         
     }
+    public void SetOpen()
+    {
+        Debug.Log(gameObject + " is now open");
+        isOpen = true;
+        interractedVisual.enabled = false;
+    }
     private void AttemptFearGhostBuster()
     {
-        Debug.Log(LayerMask.NameToLayer("Ghost Buster"));
-        int layer = LayerMask.NameToLayer("Ghost Buster");
         Collider2D[] collisions = Physics2D.OverlapBoxAll(transform.position, new Vector2(8, 8), 0);
-        Collider2D colliderGhostBuster = null;
+        Collider2D colliderPerson = null;
         foreach (Collider2D collision in collisions)
         {
             Debug.Log("Ghost Buster detected = "+ collision);
             if (collision.TryGetComponent<GhostBuster>(out GhostBuster ghostBuster))
             {
-                colliderGhostBuster = collision;
-                break;
+                colliderPerson = collision;
+                Transform ghostPosition = colliderPerson.transform;
+                Vector3 direction = (ghostPosition.position - transform.position);
+                float x_direction = direction.x;
+                if (x_direction > 0 && ghostBuster.currentDirection == GhostBuster.StateDirection.Right)
+                {
+                    ghostBuster.Surprised();
+                    Ghost.AccumulatePower();
+                }
+                else if (x_direction < 0 && ghostBuster.currentDirection == GhostBuster.StateDirection.Left)
+                {
+                    ghostBuster.Surprised();
+                    Ghost.AccumulatePower();
+                }
+                continue;
+            }
+            if(collision.TryGetComponent<NPC>(out NPC npc))
+            {
+                npc.GetAnimator().SetTrigger("Scared");
+                npc.TriggerFear(ObjectType.Lightable, this);
             }
         }
-        if(colliderGhostBuster != null)
+        if(colliderPerson != null)
         {
-            Transform ghostPosition = colliderGhostBuster.transform;
-            GhostBuster ghostBuster = colliderGhostBuster.GetComponent<GhostBuster>();
-            Vector3 direction = (ghostPosition.position - transform.position);
-            float x_direction = direction.x;
-            if(x_direction > 0  && ghostBuster.currentDirection == GhostBuster.StateDirection.Right)
-            {
-                ghostBuster.Surprised();
-                Ghost.AccumulatePower();
-            }
-            else if (x_direction < 0 && ghostBuster.currentDirection == GhostBuster.StateDirection.Left)
-            {
-                ghostBuster.Surprised();
-                Ghost.AccumulatePower();
-            }
+            
         }
     }
     private void Instance_InvokeAction2()
@@ -114,10 +147,13 @@ public class Objects : MonoBehaviour, I_InterractableVisual
     {
         
     }*/
-
+    public void SetGhost(Ghost ghost) => this.ghost = ghost;
     public IEnumerator Fading()
     {
         yield return new WaitForSeconds(3f);
+        if(ghost != null) ghost.SetInvisibility(false);
+        Ghost.isPosessing = false;
+        isPosessed = false;
         Destroy(gameObject);
     }
 
@@ -130,10 +166,10 @@ public class Objects : MonoBehaviour, I_InterractableVisual
         yield return new WaitForSeconds(0.5f);
         //GetComponent<SpriteRenderer>().color = Color.white;
         yield return new WaitForSeconds(0.5f);
-        if (targetPeople != null)
+        /*if (targetPeople != null)
         {
             targetPeople.GetComponent<FearMeter>().fearMeter += 5;
-        }
+        }*/
         //GetComponent<SpriteRenderer>().color = Color.red;
         yield return new WaitForSeconds(0.5f);
         //GetComponent<SpriteRenderer>().color = Color.white;
@@ -150,21 +186,36 @@ public class Objects : MonoBehaviour, I_InterractableVisual
         if(collision.tag == "Floor")
         {
             Debug.Log("Menyentuh Floor");
+            if (room == null) return;
             interractedVisual.sprite = TouchFloorSprite;
-            Collider2D ghostBusterCollider = Physics2D.OverlapBox(transform.position, new Vector2(8,8), 0, LayerMask.NameToLayer("Ghost Buster"));
-            Debug.Log("Ghost Buster detected = " + (ghostBusterCollider != null));
-            if (ghostBusterCollider != null)
+            List<GameObject> ListOfPeople = room.GetPeople();
+            foreach(GameObject person in ListOfPeople)
             {
-                GhostBuster ghostBuster = ghostBusterCollider.GetComponent<GhostBuster>();
-                if (ghostBuster.CheckVunerability())
+                Debug.Log(person);
+                if (person.TryGetComponent<GhostBuster>(out GhostBuster ghostBuster))
                 {
-                    ghostBuster.Fear();
+                    if (ghostBuster.CheckVunerability())
+                    {
+                        Debug.Log("Trigger Surprise Fallable on " + ghostBuster);
+                        ghostBuster.Fear();
+                    }
+                    else
+                    {
+                        
+                        Debug.Log("Trigger Surprise Fallable on " + ghostBuster);
+                        ghostBuster.Surprised();
+                    }
                 }
-                else
+                else if (person.TryGetComponent<NPC>(out NPC npc))
                 {
-                    ghostBuster.Surprised();
+                    Debug.Log("Trigger Fear Fallable on " + npc);
+                    npc.GetAnimator().SetTrigger("Scared");
+                    npc.TriggerFear(ObjectType.Fallable, this);
                 }
             }
+            ghost.SetInvisibility(false);
+            Ghost.isPosessing = false;
+            isPosessed = false;
         }
     }
 
