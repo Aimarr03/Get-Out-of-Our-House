@@ -7,7 +7,8 @@ using UnityEngine.Windows.Speech;
 
 public class Posessed : MonoBehaviour
 {
-    public DialogueScriptableObject npcConversation;
+    public DialogueScriptableObject posessed;
+    public DialogueScriptableObject killed;
     public RuntimeAnimatorController controller;
     public bool isPosessed;
     private GameObject knive;
@@ -46,6 +47,7 @@ public class Posessed : MonoBehaviour
         Debug.Log("Mengambil Knive");
         Destroy(knive);
         isHoldingKnive = true;
+        DialogueManager.instance.AssignDialogue(killed);
         npc.GetAnimator().runtimeAnimatorController = controller;
     }
 

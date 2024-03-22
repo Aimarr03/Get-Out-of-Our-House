@@ -14,7 +14,7 @@ public class GhostBuster : MonoBehaviour,I_InterractableVisual
         Right
     }
     public StateDirection currentDirection = StateDirection.Left;
-    public NPCConversation npcConversation;
+    public DialogueScriptableObject npcConversation;
     private int sanity;
     private bool isVunerable;
     private int sanityArmor;

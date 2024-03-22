@@ -34,7 +34,7 @@ public class PosessPerson : MonoBehaviour
                 Posessed posessed = targetPosess.GetComponent<Posessed>();
                 posessed.isPosessed = true;
                 Debug.Log("launching conversation");
-                DialogueManager.instance.AssignDialogue(posessed.npcConversation);
+                DialogueManager.instance.AssignDialogue(posessed.posessed);
                 
                 ghost.SetInvisibility(true);
                 ghost.npcPosessed = npc;

@@ -30,7 +30,7 @@ public class GhostBuster_Combat : MonoBehaviour
         damage = 3;
         currentAttackInterval = 0;
         currentPrepareDuration = 0;
-        attackInterval = 1.3f;
+        attackInterval = 5f;
         preparingAttackDuration = 0.4f;
     }
     private void Start()
@@ -129,6 +129,8 @@ public class GhostBuster_Combat : MonoBehaviour
         {
             if (!SoundManager.instance.sucking.isPlaying) SoundManager.instance.sucking.Play();
             currentAttackInterval = 0;
+            ghostRigidbody.GetComponent<Ghost>().Damage();
+            ghostRigidbody.GetComponent<Ghost>().getAnimator().SetTrigger("Damage");
             Debug.Log("Ghost Take Damage " + damage);
         }
     }

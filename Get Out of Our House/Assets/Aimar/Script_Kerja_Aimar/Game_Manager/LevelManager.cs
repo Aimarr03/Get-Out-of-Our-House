@@ -2,23 +2,28 @@ using DialogueEditor;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
+    public Animator animatorEnding;
     public bool hasEnded;
     public Image backgroundImage;
+    public Sprite Ending_Fear;
+    public Sprite Ending_Murder;
     public static LevelManager instance;
 
     public void Awake()
     {
         if(instance == null)
         instance = this;
+        animatorEnding = GetComponent<Animator>();
     }
-    private void Start()
+    private void Update()
     {
-        //EndGame("Tragedy");
+
     }
 
     private void Instance_endDialogue()
@@ -26,17 +31,27 @@ public class LevelManager : MonoBehaviour
         throw new System.NotImplementedException();
     }
 
-    public void EndGame(NPCConversation dialogue)
+    public void EndGame(DialogueScriptableObject dialogue)
     {
+        switch (EndingManager.instance.currentEndingType)
+        {
+            case EndingManager.EndingType.Ending_Fear:
+                backgroundImage.sprite = Ending_Fear;
+                break;
+            case EndingManager.EndingType.Ending_Murder: 
+                backgroundImage.sprite= Ending_Murder;
+                break;
+        }
         hasEnded = true;
-        backgroundImage.enabled = true;
+        backgroundImage.gameObject.SetActive(true);
         StartCoroutine(Delay(dialogue));
     }
-    private IEnumerator Delay(NPCConversation npcConversation)
+    private IEnumerator Delay(DialogueScriptableObject dialogue)
     {
         Debug.Log("Delay");
         yield return new WaitForSeconds(1.1f);
+        animatorEnding.SetBool("HasEnded", true);
         Debug.Log("assigned Dialouge");
-        ConversationManager.Instance.StartConversation(npcConversation);
+        DialogueManager.instance.AssignDialogue(dialogue);
     }
 }

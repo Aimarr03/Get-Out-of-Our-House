@@ -40,6 +40,10 @@ public class DialogueManager : MonoBehaviour
         dialogueHolder.SetActive(false);
         PlayerControllerManager.instance.InvokeInterract -= OnInterractDialogue;
         endDialogue?.Invoke();
+        if (LevelManager.instance.hasEnded)
+        {
+            Debug.Log("Change into main menu");
+        }
     }
     private void OnDialogueStart()
     {
@@ -59,6 +63,7 @@ public class DialogueManager : MonoBehaviour
     }
     private void OnInterractDialogue()
     {
+        Debug.Log("Dialog Interraction");
         if(currentLine < currentDialogue.entireDialogue.Count)
         {
             StopAllCoroutines();
