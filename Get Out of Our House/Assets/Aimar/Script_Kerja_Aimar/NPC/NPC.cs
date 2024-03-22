@@ -127,7 +127,6 @@ public class NPC : MonoBehaviour
         switch (objectType)
         {
             case Objects.ObjectType.Lightable:
-                if (type != NPC_Type.Child) return;
                 fearMeter++;
                 panicAttack?.Invoke();
                 Debug.Log("Trigger Fear " + transform.ToString());

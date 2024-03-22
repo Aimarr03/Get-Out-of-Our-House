@@ -6,6 +6,7 @@ using VIDE_Data;
 
 public class DialogueManager : MonoBehaviour
 {
+    public bool isActive;
     public event Action beginDialogue;
     public event Action endDialogue;
     [SerializeField] private TextMeshProUGUI dialogueContent;
@@ -19,6 +20,7 @@ public class DialogueManager : MonoBehaviour
     {
         if (instance != null) return;
         instance = this;
+        isActive = false;
         
     }
     private void Start()
@@ -29,6 +31,7 @@ public class DialogueManager : MonoBehaviour
     }
     private void OnDialogueStop()
     {
+        isActive = false;
         dialogueContent.text = "";
         nameContent.text = "";
         dialogueHolder.SetActive(false);
@@ -37,6 +40,7 @@ public class DialogueManager : MonoBehaviour
     }
     private void OnDialogueStart()
     {
+        isActive = true;
         beginDialogue?.Invoke();
         PlayerControllerManager.instance.InvokeInterract += OnInterractDialogue;
         dialogueContent.text = "";

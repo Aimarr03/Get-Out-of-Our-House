@@ -62,6 +62,8 @@ public class TimeManager : MonoBehaviour
     }
     private void Update()
     {
+        if (LevelManager.instance.hasEnded) return;
+        if (DialogueManager.instance.isActive) return;
         currentTime += Time.deltaTime;
         TestingRealTime += Time.deltaTime;
         //This approach is to make sure that the time one second is recorded

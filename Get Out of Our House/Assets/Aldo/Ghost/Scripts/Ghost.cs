@@ -74,13 +74,13 @@ public class Ghost : MonoBehaviour
 
     private void Instance_endDialogue()
     {
-        PlayerControllerManager.instance.InvokeInterract -= Instance_InvokeInterract;
+        PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
         canMove = true;
     }
 
     private void Instance_beginDialogue()
     {
-        PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
+        PlayerControllerManager.instance.InvokeInterract -= Instance_InvokeInterract;
         canMove= false;
     }
 

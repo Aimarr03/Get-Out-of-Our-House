@@ -33,6 +33,7 @@ public class Posessed : MonoBehaviour
             {
                 if (targetNPC.type == NPC.NPC_Type.Child) continue;
                 Debug.Log("Killed " + targetNPC.type);
+                LevelManager.instance.EndGame("Tragedy");
             }
         }
     }

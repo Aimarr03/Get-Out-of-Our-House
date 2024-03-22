@@ -115,6 +115,7 @@ public class Objects : MonoBehaviour, I_InterractableVisual
             }
             if(collision.TryGetComponent<NPC>(out NPC npc))
             {
+                npc.GetAnimator().SetTrigger("Scared");
                 npc.TriggerFear(ObjectType.Lightable, this);
             }
         }
@@ -199,6 +200,7 @@ public class Objects : MonoBehaviour, I_InterractableVisual
                     }
                     else
                     {
+                        
                         Debug.Log("Trigger Surprise Fallable on " + ghostBuster);
                         ghostBuster.Surprised();
                     }
@@ -206,6 +208,7 @@ public class Objects : MonoBehaviour, I_InterractableVisual
                 else if (person.TryGetComponent<NPC>(out NPC npc))
                 {
                     Debug.Log("Trigger Fear Fallable on " + npc);
+                    npc.GetAnimator().SetTrigger("Scared");
                     npc.TriggerFear(ObjectType.Fallable, this);
                 }
             }

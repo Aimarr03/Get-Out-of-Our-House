@@ -27,6 +27,7 @@ public class NPC_Move_Action : MonoBehaviour
     private NPC npc;
     public MoveAction moveAction;
     public int duration;
+    private Coroutine currentCoroutine;
     private void Awake()
     {
         isMovingByEvent = false;
@@ -37,6 +38,7 @@ public class NPC_Move_Action : MonoBehaviour
         StartIdlingTheRoom();
         npc.panicAttack += Npc_panicAttack;
     }
+
     public void SetInterract(float position)
     {
         Debug.Log("Preparing to Interract");
@@ -44,7 +46,7 @@ public class NPC_Move_Action : MonoBehaviour
         Vector3 targPosition = new Vector3(position, transform.position.y, 0);
         npc.GetAnimator().SetFloat("IsMoving", -1);
         StopAllCoroutines();
-        StartCoroutine(InterractAction(targPosition));
+        currentCoroutine = StartCoroutine(InterractAction(targPosition));
     }
     private IEnumerator InterractAction(Vector3 targetPosition)
     {
@@ -115,6 +117,7 @@ public class NPC_Move_Action : MonoBehaviour
         Debug.Log(npc + " Moving");
         while (Vector3.Distance(targetLocation, transform.position) > 0.15f)
         {
+            if (DialogueManager.instance.isActive) continue;
             npc.GetAnimator().SetFloat("IsMoving", 1);
             MovingTowards();
             yield return null;
