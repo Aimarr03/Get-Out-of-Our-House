@@ -127,6 +127,7 @@ public class GhostBuster_Combat : MonoBehaviour
         currentAttackInterval += Time.deltaTime;
         if (currentAttackInterval >= attackInterval)
         {
+            if (!SoundManager.instance.sucking.isPlaying) SoundManager.instance.sucking.Play();
             currentAttackInterval = 0;
             Debug.Log("Ghost Take Damage " + damage);
         }

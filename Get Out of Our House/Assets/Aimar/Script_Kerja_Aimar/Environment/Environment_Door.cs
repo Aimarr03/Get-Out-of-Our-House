@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Environment_Door : MonoBehaviour, I_InterractableVisual
 {
+    [SerializeField] private bool isDoor = false;
     [SerializeField] private Transform LightField;
     [SerializeField] private Environment_Door nextDoor;
     [SerializeField] private Transform cameraPosition;
@@ -22,7 +23,7 @@ public class Environment_Door : MonoBehaviour, I_InterractableVisual
     {
         Vector3 targetPosition = nextDoor.transform.position;
         targetPosition.y = nextDoor.room.GetFloorVerticalBound();
-
+        if (isDoor) SoundManager.instance.door.Play();
         room.RemoveCharacter(npc.gameObject);
         npc.DesubscribeToRoom(room);
         npc.SetRoom(nextDoor.room);
