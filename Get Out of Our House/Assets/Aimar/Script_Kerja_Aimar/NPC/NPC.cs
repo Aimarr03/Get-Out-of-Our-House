@@ -104,6 +104,7 @@ public class NPC : MonoBehaviour
     }
     public void SetBehaviour(BehaviourAction action)
     {
+        if (type == NPC_Type.Child && isPosessed) return;
         Debug.Log("Behaviour Action Invoked");
         behaviourAction = action;
         IsBusy = true;

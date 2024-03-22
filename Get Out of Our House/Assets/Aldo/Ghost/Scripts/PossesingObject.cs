@@ -26,8 +26,10 @@ public class PossesingObject : MonoBehaviour
         {
             Debug.Log("Posessing Object");
             ghost.SetInvisibility(true);
-            otherObject.GetComponent<Objects>().isPosessed = true;
-            otherObject.GetComponent<Objects>().SetGhost(ghost);
+            Objects objects = otherObject.GetComponent<Objects>();
+            objects.isPosessed = true;
+            objects.SetGhost(ghost);
+            objects.SetPossessObject();
             return;
         }
 
@@ -35,8 +37,10 @@ public class PossesingObject : MonoBehaviour
         {
             Debug.Log("Keluar dari Object");
             ghost.SetInvisibility(false);
-            otherObject.GetComponent<Objects>().isPosessed = false;
-            otherObject.GetComponent<Objects>().SetGhost(null);
+            Objects objects = otherObject.GetComponent<Objects>();
+            objects.isPosessed = false;
+            objects.SetGhost(null);
+            objects.UnsetPosessedObject();
         }
     }
 

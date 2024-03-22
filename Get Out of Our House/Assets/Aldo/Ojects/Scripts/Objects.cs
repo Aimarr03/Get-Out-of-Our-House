@@ -39,10 +39,18 @@ public class Objects : MonoBehaviour, I_InterractableVisual
     {
         interractedVisual = GetComponent<SpriteRenderer>();
         InterractEffect(currentInterract);
+        
+    }
+    public void SetPossessObject()
+    {
         PlayerControllerManager.instance.InvokeAction1 += Instance_InvokeAction1;
         PlayerControllerManager.instance.InvokeAction2 += Instance_InvokeAction2;
     }
-
+    public void UnsetPosessedObject()
+    {
+        PlayerControllerManager.instance.InvokeAction1 -= Instance_InvokeAction1;
+        PlayerControllerManager.instance.InvokeAction2 -= Instance_InvokeAction2;
+    }
     // Update is called once per frame
     void Update()
     {

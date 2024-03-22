@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.Windows.Speech;
 
 public class Posessed : MonoBehaviour
 {
+    public RuntimeAnimatorController controller;
     public bool isPosessed;
     private GameObject knive;
     public bool isHoldingKnive;
@@ -16,16 +18,32 @@ public class Posessed : MonoBehaviour
     {
         npc = GetComponent<NPC>();
         rb = GetComponent<Rigidbody2D>();
-        PlayerControllerManager.instance.InvokeAction1 += Instance_InvokeAction;
+        PlayerControllerManager.instance.InvokeInterract += Instance_InvokeAction;
+        PlayerControllerManager.instance.InvokeAction1 += Instance_InvokeAction1;
+    }
+
+    private void Instance_InvokeAction1()
+    {
+        if (!isHoldingKnive) return;
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(transform.position, new Vector2(6, 8), 0);
+        foreach(Collider2D collider in colliders)
+        {
+            Debug.Log(collider.gameObject);
+            if(collider.TryGetComponent<NPC>(out NPC targetNPC))
+            {
+                if (targetNPC.type == NPC.NPC_Type.Child) continue;
+                Debug.Log("Killed " + targetNPC.type);
+            }
+        }
     }
 
     void Instance_InvokeAction()
     {
-        if (knive == null) return;
+        if (knive == null || !isPosessed) return;
         Debug.Log("Mengambil Knive");
         Destroy(knive);
         isHoldingKnive = true;
-        GetComponent<SpriteRenderer>().color = Color.cyan;
+        npc.GetAnimator().runtimeAnimatorController = controller;
     }
 
     // Update is called once per frame
@@ -34,12 +52,27 @@ public class Posessed : MonoBehaviour
         if (isPosessed)
         {
             moving();
+            CheckKnife();
         }
     }
-
+    private void CheckKnife()
+    {
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(transform.position, new Vector2(2, 4), 0);
+        foreach (Collider2D collider in colliders)
+        {
+            if(collider.gameObject.tag == "Knive")
+            {
+                knive = collider.gameObject;
+            }
+        }
+    }
     void moving()
     {
         if (!isPosessed) return;
+        if (npc == null || npc.GetAnimator() == null)
+        {
+            return;
+        }
         Vector2 inputMovement = PlayerControllerManager.instance.GetVector2Input();
         if (inputMovement != Vector2.zero)
         {
@@ -59,19 +92,5 @@ public class Posessed : MonoBehaviour
             transform.rotation = Quaternion.Euler(0, 180, 0);
         }
     }
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.tag == "Knive" && isPosessed)
-        {
-            knive = other.gameObject;
-        }
-    }
-
-    void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.tag == "Knive")
-        {
-            knive = null;
-        }
-    }
+    
 }

@@ -29,7 +29,10 @@ public class PosessPerson : MonoBehaviour
                 npc.GetMoveAction().StopAllCoroutines();
                 npc.isPosessed = true;
                 npc.GetAnimator().SetFloat("IsMoving", -1);
-                targetPosess.GetComponent<Posessed>().isPosessed = true;
+                npc.GetAnimator().GetComponent<SpriteRenderer>().color = new Color(210, 130, 130);
+                Posessed posessed = targetPosess.GetComponent<Posessed>();
+                posessed.isPosessed = true;
+                
                 ghost.SetInvisibility(true);
                 ghost.npcPosessed = npc;
                 Ghost.isPosessingPerson = true;

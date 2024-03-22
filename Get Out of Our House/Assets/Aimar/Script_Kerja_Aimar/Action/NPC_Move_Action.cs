@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using static GhostBuster;
+using static NPC;
 
 public class NPC_Move_Action : MonoBehaviour
 {
@@ -132,6 +133,7 @@ public class NPC_Move_Action : MonoBehaviour
     }
     public void StartIdlingTheRoom()
     {
+        if (npc.type == NPC_Type.Child && npc.isPosessed) return;
         StopAllCoroutines();
         //Debug.Log("NPC Idling");
         Room room = npc.GetRoom();
@@ -141,6 +143,7 @@ public class NPC_Move_Action : MonoBehaviour
     }
     public void SetMoveAction(MoveAction moveAction)
     {
+        if (npc.type == NPC_Type.Child && npc.isPosessed) return;
         this.moveAction = moveAction;
         StopAllCoroutines();
         transformList = new Queue<Environment_Door>(moveAction.DestinationLocation);
