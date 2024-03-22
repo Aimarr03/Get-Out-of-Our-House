@@ -27,6 +27,9 @@ public class Ghost : MonoBehaviour
     [SerializeField] private LayerMask visible;
     [SerializeField] private LayerMask invisible;
 
+    public event Action TakeDamage;
+    public int health = 3;
+    public DialogueScriptableObject dialogue;
     private PosessPerson possessPerson;
     private PossesingObject possessObject;
     private GameObject currentGameObject;
@@ -46,8 +49,8 @@ public class Ghost : MonoBehaviour
         //currentRoom.PlayParticleSystem(true);
         PlayerControllerManager.instance.InvokeInterract += Instance_InvokeInterract;
         PlayerControllerManager.instance.InvokeUltimate += Instance_InvokeUltimate;
-        ConversationManager.OnConversationStarted += Begin_Conversation;
-        ConversationManager.OnConversationEnded += End_Conversation;
+        DialogueManager.instance.endDialogue += Begin_Conversation;
+        DialogueManager.instance.beginDialogue += End_Conversation;
     }
     private void Begin_Conversation()
     {
@@ -258,5 +261,14 @@ public class Ghost : MonoBehaviour
     {
         Gizmos.DrawWireCube(transform.position, boxSize);
     }
-
+    public void Damage()
+    {
+        health--;
+        TakeDamage?.Invoke();
+        if(health <= 0)
+        {
+            LevelManager.instance.EndGame(dialogue);
+        }
+    }
+    public Animator getAnimator() => animator;
 }

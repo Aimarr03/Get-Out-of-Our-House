@@ -49,6 +49,10 @@ public class NPC : MonoBehaviour
     {
         if (currentRoom != null) currentRoom.AddCharacter(gameObject);
     }
+    private void Update()
+    {
+        if(LevelManager.instance.hasEnded) StopAllCoroutines();
+    }
     private void Instance_OneSecondIntervalEventAction(int currentimer)
     {
         if(hasDialogue) DialogueCheckCondition();
