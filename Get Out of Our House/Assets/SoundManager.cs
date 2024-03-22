@@ -10,6 +10,7 @@ public class SoundManager : MonoBehaviour
     public AudioSource door;
     public AudioSource normalAmbient;
     public AudioSource ghostBusterAmbient;
+    public AudioSource ambilPisau;
 
     public void Start()
     {
