@@ -12,4 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb296ee851b0a444f9e517224d4e4793, type: 3}
   m_Name: Lose
   m_EditorClassIdentifier: 
-  entireDialogue: []
+  entireDialogue:
+  - comment: See.... I told you guys this ghost is nothing
+    name: Ghost Buster
+  - comment: Thank you Sir
+    name: Frank
+  - comment: We don't know what would we be if you weren't there sir
+    name: Margarret
