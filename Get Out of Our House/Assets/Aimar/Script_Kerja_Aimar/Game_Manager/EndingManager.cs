@@ -9,7 +9,8 @@ public class EndingManager : MonoBehaviour
     {
         Ending_Fear,
         Ending_Murder,
-        Ending_True
+        Ending_True,
+        Lose
     }
     public EndingType currentEndingType;
     private void Awake()

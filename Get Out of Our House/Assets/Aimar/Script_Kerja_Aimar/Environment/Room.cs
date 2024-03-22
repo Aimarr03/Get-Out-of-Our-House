@@ -94,12 +94,25 @@ public class Room : MonoBehaviour
         }
         else if(gameObject.TryGetComponent<Ghost>(out Ghost GhostCome))
         {
+            NPC npcChecking = null;
             foreach (GameObject currentGameObject in charactersInRoom)
             {
                 if (currentGameObject.TryGetComponent(out GhostBuster GhostCurrentInTheSameRoom))
                 {
                     GhostCurrentInTheSameRoom.SetGhostDetected(GhostCome);
                 }
+                if(currentGameObject.TryGetComponent<NPC>(out NPC npc))
+                {
+                    npcChecking = npc;
+                }
+            }
+            if (npcChecking != null)
+            {
+                SoundManager.instance.walking.Play();
+            }
+            else
+            {
+                SoundManager.instance.walking.Stop();
             }
         }
         //if (CheckCharacter(gameObject)) return;

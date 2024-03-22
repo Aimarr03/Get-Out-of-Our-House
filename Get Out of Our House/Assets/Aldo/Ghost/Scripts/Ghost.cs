@@ -51,6 +51,7 @@ public class Ghost : MonoBehaviour
         PlayerControllerManager.instance.InvokeUltimate += Instance_InvokeUltimate;
         DialogueManager.instance.endDialogue += Begin_Conversation;
         DialogueManager.instance.beginDialogue += End_Conversation;
+        //SoundManager.instance.normalAmbient.Play();
     }
     private void Begin_Conversation()
     {
@@ -267,6 +268,7 @@ public class Ghost : MonoBehaviour
         TakeDamage?.Invoke();
         if(health <= 0)
         {
+            EndingManager.instance.currentEndingType = EndingManager.EndingType.Lose;
             LevelManager.instance.EndGame(dialogue);
         }
     }

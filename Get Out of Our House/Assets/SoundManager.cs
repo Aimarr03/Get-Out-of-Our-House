@@ -19,5 +19,18 @@ public class SoundManager : MonoBehaviour
             instance = this;
         }
     }
-
+    public void SetGhostBusterSound()
+    {
+        normalAmbient.Stop();
+        ghostBusterAmbient.Play();
+    }
+    public void StopPlayingAll()
+    {
+        sucking.Stop();
+        walking.Stop();
+        door.Stop();    
+        normalAmbient.Stop();
+        ambilPisau.Stop();
+        ghostBusterAmbient.Stop();
+    }
 }

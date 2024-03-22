@@ -1,9 +1,4 @@
-using DialogueEditor;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Animations;
 using UnityEngine;
-using UnityEngine.Windows.Speech;
 
 public class Posessed : MonoBehaviour
 {
@@ -36,7 +31,9 @@ public class Posessed : MonoBehaviour
             {
                 if (targetNPC.type == NPC.NPC_Type.Child) continue;
                 Debug.Log("Killed " + targetNPC.type);
-                
+                SoundManager.instance.ambilPisau.Stop();
+                LevelManager.instance.EndGame(killed);
+
             }
         }
     }
@@ -47,7 +44,8 @@ public class Posessed : MonoBehaviour
         Debug.Log("Mengambil Knive");
         Destroy(knive);
         isHoldingKnive = true;
-        DialogueManager.instance.AssignDialogue(killed);
+        SoundManager.instance.normalAmbient.Stop();
+        SoundManager.instance.ambilPisau.Play();
         npc.GetAnimator().runtimeAnimatorController = controller;
     }
 

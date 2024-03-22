@@ -13,6 +13,7 @@ public class LevelManager : MonoBehaviour
     public Image backgroundImage;
     public Sprite Ending_Fear;
     public Sprite Ending_Murder;
+    public Sprite Lose;
     public static LevelManager instance;
 
     public void Awake()
@@ -33,6 +34,7 @@ public class LevelManager : MonoBehaviour
 
     public void EndGame(DialogueScriptableObject dialogue)
     {
+        SoundManager.instance.StopPlayingAll();
         switch (EndingManager.instance.currentEndingType)
         {
             case EndingManager.EndingType.Ending_Fear:
@@ -40,6 +42,9 @@ public class LevelManager : MonoBehaviour
                 break;
             case EndingManager.EndingType.Ending_Murder: 
                 backgroundImage.sprite= Ending_Murder;
+                break;
+            case EndingManager.EndingType.Lose:
+                backgroundImage.sprite = Lose;
                 break;
         }
         hasEnded = true;

@@ -73,7 +73,7 @@ public class GhostBuster_Combat : MonoBehaviour
     private void AggroState()
     {
         //Ghost ghost = ghostBuster.IsGhostDetected();
-
+        SoundManager.instance.sucking.Stop();
         GhostBuster_Move_Action moveAction = ghostBuster.GetMoveAction();
         
         Vector3 offsetPosition = new Vector3(transform.position.x, transform.position.y + aggroSize.y / 2, transform.position.z);

@@ -17,6 +17,7 @@ public class DialogueManager : MonoBehaviour
     public static DialogueManager instance;
     private int currentLine;
     private int currentSegment;
+    private int iteration;
 
     private void Awake()
     {
@@ -43,6 +44,7 @@ public class DialogueManager : MonoBehaviour
         if (LevelManager.instance.hasEnded)
         {
             Debug.Log("Change into main menu");
+            SceneLoader.LoadScene(0);
         }
     }
     private void OnDialogueStart()
@@ -52,34 +54,39 @@ public class DialogueManager : MonoBehaviour
         PlayerControllerManager.instance.InvokeInterract += OnInterractDialogue;
         dialogueContent.text = "";
         nameContent.text = "";
-        currentLine = 0;
+        
         dialogueHolder.SetActive(true);
         OnInterractDialogue();
     }
     public void AssignDialogue(DialogueScriptableObject dialogueName)
     {
         currentDialogue = dialogueName;
+        currentLine = -1;
         OnDialogueStart();
     }
     private void OnInterractDialogue()
     {
-        Debug.Log("Dialog Interraction");
-        if(currentLine < currentDialogue.entireDialogue.Count)
+        currentLine++;
+        iteration++;
+        if (currentLine < currentDialogue.entireDialogue.Count)
         {
             StopAllCoroutines();
             StartCoroutine(DisplayDialogue());
-            currentLine++;
         }
         else
         {
             OnDialogueStop();
         }
-        
+        if(iteration > currentDialogue.entireDialogue.Count)
+        {
+            OnDialogueStop();
+            iteration = 0;
+        }
     }
     private IEnumerator DisplayDialogue()
     {
-        string text = currentDialogue.entireDialogue[currentLine].comment;
-        string name = currentDialogue.entireDialogue[currentLine].name;
+        string text = currentDialogue.entireDialogue[currentLine].name;
+        string name = currentDialogue.entireDialogue[currentLine].comment;
         nameContent.text = name;
         string currentText = "";
         int index = 0;
@@ -88,7 +95,7 @@ public class DialogueManager : MonoBehaviour
             currentText += text[index];
             dialogueContent.text = currentText;
             index++;
-            yield return new WaitForSeconds(0.07f);
+            yield return new WaitForSeconds(0.05f);
         }
         
     }
